@@ -8,7 +8,7 @@
 
 - `$huashu-md-html`：把网页、微信公众号、PDF、DOCX、PPTX、表格、图片或其他文件转为 Markdown。
 - `$obsidian`：把转换后的 Markdown 创建或整理到用户指定的 Vault 文件夹。
-- `$knowledge-peak-map`：只对用户确认的文章集合做语义审阅、版本归并、规则抽离和地图生成。
+- `$knowledge-peak-map`：只对用户确认的文章集合做语义审阅、版本归并、场景/行业山峰识别和地图生成。
 
 ## 输入路由
 

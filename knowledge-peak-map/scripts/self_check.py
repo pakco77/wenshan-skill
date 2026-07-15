@@ -35,29 +35,29 @@ def main() -> None:
                 cards.append({"id": card_id, "title": f"Original {card_id}", "judgment": "Evidence", "crosses": []})
             territories.append({
                 "id": f"custom-topic-{territory_index}",
-                "domain": f"证据域 {territory_index}",
-                "domain_en": f"Evidence domain {territory_index}",
-                "rule": f"规则 {territory_index}",
-                "rule_en": f"Rule {territory_index}",
+                "label": f"行业 {territory_index}",
+                "label_en": f"Industry {territory_index}",
+                "label_kind": "industry",
+                "label_rationale": "三篇独立文章都在讨论同一行业场景",
                 "status": "evidenced",
-                "explanation": "证据解释",
-                "explanation_en": "Evidence explanation",
+                "answer": "Agent 对该行业文章的回答",
+                "answer_en": "The Agent's answer about this industry",
                 "cards": cards,
             })
 
-        payload = build_payload(scope, {"territories": territories}, "", str(scope), "en")
+        payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert payload["profile"]["nickname"] == "Anonymous"
         assert [item["id"] for item in payload["territories"]] == [
             "custom-topic-0", "custom-topic-1", "custom-topic-2"
         ]
         assert all(item["count"] == 3 for item in payload["territories"])
-        assert payload["territories"][0]["rule_en"] == "Rule 0"
-        assert payload["territories"][0]["domain"] == "证据域 0"
+        assert payload["territories"][0]["label_en"] == "Industry 0"
+        assert payload["territories"][0]["answer"] == "Agent 对该行业文章的回答"
         assert len({(item["x"], item["y"]) for item in payload["territories"]}) == 3
         (vault / ".obsidian").rmdir()
-        markdown_payload = build_payload(scope, {"territories": territories}, "", str(scope), "en")
+        markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert markdown_payload["territories"][0]["points"][0]["url"].startswith("file://")
-        print("PASS extracted-rule schema, evidence gate, canonical filter, layout, and Markdown fallback")
+        print("PASS scene-and-industry label schema, evidence gate, canonical filter, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":

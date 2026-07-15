@@ -32,27 +32,27 @@ Only `decision.include: true` and `decision.canonical: true` cards can add altit
 
 ## Terrain
 
-Store the reviewed rule clusters at `wenshan-terrain.json`:
+Store the reviewed scene or industry clusters at `wenshan-terrain.json`:
 
 ```json
 {
-  "version": 2,
-  "semantic_contract": "mountain_title_is_agent_extracted_transferable_rule",
+  "version": 3,
+  "semantic_contract": "mountain_title_is_agent_identified_scene_or_industry_keyword",
   "territories": [
     {
-      "id": "friction-determines-adoption",
-      "domain": "AI工具",
-      "domain_en": "AI Tools",
-      "rule": "摩擦决定采用",
-      "rule_en": "Friction Determines Adoption",
-      "explanation": "能嵌入工作流，比功能最强更重要。",
-      "explanation_en": "Workflow fit beats feature strength.",
+      "id": "ai-tools",
+      "label": "AI工具",
+      "label_en": "AI Tools",
+      "label_kind": "knowledge_domain",
+      "label_rationale": "多篇文章反复讨论AI工具选择、评测与工作流接入。",
+      "answer": "工具要真正进入工作流，低摩擦比功能最强更重要。",
+      "answer_en": "For tools to enter real workflows, low friction matters more than maximum features.",
       "status": "evidenced",
       "cards": [
         {
           "id": "card-id",
           "title": "Original article title",
-          "judgment": "Why this article supports the rule.",
+          "judgment": "Why this article belongs to the peak and supports its answer.",
           "crosses": []
         }
       ]
@@ -61,14 +61,17 @@ Store the reviewed rule clusters at `wenshan-terrain.json`:
 }
 ```
 
-`id` is internal and stable. It must not be treated as user-facing copy. `domain` is optional subordinate context. `rule` is the mountain's main title.
+`id` is internal and stable. It must not be treated as user-facing copy. `label` is the mountain's main title and must be a concrete scene or industry keyword identified by the Agent. `answer` is the Agent's evidence-backed subtitle judgment.
+
+`label_kind` must be one of `scene`, `industry`, `role`, `practice`, or `knowledge_domain`. `label_rationale` records why the source articles justify that concrete label. These audit fields are required in schema version 3 but are not rendered on the public map.
 
 ## Invariants
 
 - A visible mountain has `status: evidenced` and at least three eligible unique card paths.
+- Schema version 3 fails rendering when a visible mountain lacks a reviewed `label_kind` or `label_rationale`.
 - A canonical article belongs to one primary mountain.
 - `crosses` may reference up to two other mountain IDs but never add altitude there.
 - Article titles remain in the source language.
 - Bilingual UI copy may be reviewed or omitted; missing English falls back to the source-language field.
 - The renderer rechecks card decisions and paths. A stale terrain file cannot force an excluded or non-canonical card onto the map.
-- Legacy `title`, `title_en`, `llm_answer`, and `llm_answer_en` fields are accepted for one compatibility release, but new outputs must use `domain`, `rule`, and `explanation`.
+- Legacy `title`, `title_en`, `llm_answer`, `llm_answer_en`, `domain`, `rule`, and `explanation` fields are accepted for one compatibility release, but new outputs must use `label` and `answer`.

@@ -2,7 +2,7 @@
 """Render the evidence-gated 文山.skill demo without embeddings.
 
 Terrain position is a stable visual layout. A mountain exists only when an
-Agent-extracted rule has three or more independent canonical articles.
+Agent-identified scene or industry label has three or more independent canonical articles.
 """
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ ANCHORS = {
     "ai-cognition": (0.70, 0.24),
     "parenting-life": (0.75, 0.76),
 }
+LABEL_KINDS = {"scene", "industry", "role", "practice", "knowledge_domain"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -44,6 +45,31 @@ def read_json(path: Path) -> dict:
         raise SystemExit(f"Missing evidence file: {path}") from exc
     except json.JSONDecodeError as exc:
         raise SystemExit(f"Invalid JSON: {path}: {exc}") from exc
+
+
+def first_text(value: dict, *keys: str) -> str:
+    for key in keys:
+        item = value.get(key)
+        if isinstance(item, str) and item.strip():
+            return item
+    return ""
+
+
+def validate_peak_labels(data: dict) -> None:
+    if int(data.get("version", 0)) < 3:
+        return
+    for territory in data.get("territories", []):
+        if territory.get("status") != "evidenced":
+            continue
+        label = first_text(territory, "label")
+        kind = territory.get("label_kind")
+        rationale = first_text(territory, "label_rationale")
+        if kind not in LABEL_KINDS:
+            raise SystemExit(f"{territory.get('id', '<unknown>')}: label_kind must be one of {sorted(LABEL_KINDS)}")
+        if not label or not rationale:
+            raise SystemExit(f"{territory.get('id', '<unknown>')}: label and label_rationale are required")
+        if len(label) > 40 or any(mark in label for mark in "，。！？；：,.!?;:"):
+            raise SystemExit(f"{territory.get('id', '<unknown>')}: label must be a compact scene or industry keyword, not a sentence")
 
 
 def vault_for(scope: Path) -> Path | None:
@@ -96,6 +122,7 @@ def unit_jitter(identifier: str, index: int, total: int) -> tuple[float, float]:
 
 
 def build_payload(scope: Path, data: dict, nickname: str, collection_url: str, language: str) -> dict:
+    validate_peak_labels(data)
     vault = vault_for(scope)
     candidates = [
         territory for territory in data.get("territories", [])
@@ -131,12 +158,10 @@ def build_payload(scope: Path, data: dict, nickname: str, collection_url: str, l
             })
         territories.append({
             "id": ident,
-            "domain": territory.get("domain", territory.get("title", "")),
-            "domain_en": territory.get("domain_en", territory.get("title_en", territory.get("title", ""))),
-            "rule": territory.get("rule", territory.get("title", "")),
-            "rule_en": territory.get("rule_en", territory.get("title_en", territory.get("rule", territory.get("title", "")))),
-            "explanation": territory.get("explanation", territory.get("llm_answer", "")),
-            "explanation_en": territory.get("explanation_en", territory.get("llm_answer_en", territory.get("explanation", territory.get("llm_answer", "")))),
+            "label": first_text(territory, "label", "domain", "title", "rule"),
+            "label_en": first_text(territory, "label_en", "domain_en", "title_en", "label", "domain", "title", "rule_en", "rule"),
+            "answer": first_text(territory, "answer", "explanation", "llm_answer"),
+            "answer_en": first_text(territory, "answer_en", "explanation_en", "llm_answer_en", "answer", "explanation", "llm_answer"),
             "count": len(points),
             "x": ax,
             "y": ay,
@@ -174,8 +199,8 @@ html,body{overflow-x:hidden}body{background:radial-gradient(ellipse at 50% 5%,#e
 <script>
 const DATA=__DATA__,canvas=document.querySelector('#map'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,inspector=document.querySelector('#inspector');
 const PALETTE=[{rgb:[149,104,55],line:'#765b35',dot:'#5a4226'},{rgb:[57,101,98],line:'#3e6864',dot:'#30514e'},{rgb:[119,78,71],line:'#714b45',dot:'#51332e'},{rgb:[83,92,119],line:'#4e5875',dot:'#384057'},{rgb:[113,105,60],line:'#6b6438',dot:'#4f4929'},{rgb:[92,73,105],line:'#594765',dot:'#40334a'},{rgb:[70,104,116],line:'#456872',dot:'#334e56'},{rgb:[128,89,62],line:'#76523a',dot:'#563b2a'}],COLORS={};DATA.territories.forEach((territory,index)=>COLORS[territory.id]=PALETTE[index%PALETTE.length]);
-const WORDS={zh:{brand:'文山.skill',slogan:'用山脉展示你的篇章',pageTitle:'文山.skill · 知识山峰',anonymous:'匿名',mapAria:'知识山峰地图',toolsAria:'地图控制台',contextIndex:'KNOWLEDGE PEAKS<br>EVIDENCE-GATED ATLAS<br>LOCAL AGENT',contextGuide:'选择一座山<br>阅读它的规则<br>回到原始文章',setupLabel:'设置',setupKicker:'文山.skill / 设置',setupTitle:'先确定这张图属于谁，分析什么。',nicknameField:'01 · 当前用户昵称',collectionField:'02 · 文章集合 URL',nicknamePlaceholder:'例如：Pakco',collectionPlaceholder:'粘贴 Obsidian 文件夹、本地集合或文章库 URL',setupHelp:'保存后更新地图署名与材料引用。真正的文章读取、证据筛选与重新生成，由本地 Agent 在此集合上执行。',setupSubmit:'保存此地图设置',stat:(articles,mountains)=>`${articles}文 ≈ ${mountains}山`,pieces:n=>`${n}篇`,articles:n=>`${n} 篇独立文章`,source:'查看文章',close:'关闭',shot:'截图',exporting:'生成中',saved:'已导出'},en:{brand:'Wenshan.skill',slogan:'Map your writing as mountains.',pageTitle:'Wenshan.skill · Knowledge Peaks',anonymous:'Anonymous',mapAria:'Knowledge mountain map',toolsAria:'Map controls',contextIndex:'KNOWLEDGE PEAKS<br>EVIDENCE-GATED ATLAS<br>LOCAL AGENT',contextGuide:'Choose a mountain<br>Read its rule<br>Return to the source',setupLabel:'Setup',setupKicker:'Wenshan.skill / SETUP',setupTitle:'Define whose map this is and which writing to analyze.',nicknameField:'01 · Author nickname',collectionField:'02 · Article collection URL',nicknamePlaceholder:'For example: Pakco',collectionPlaceholder:'Paste an Obsidian folder, local collection, or article-library URL',setupHelp:'Saving updates attribution and the collection reference. Your local Agent performs article reading, evidence review, and regeneration on that collection.',setupSubmit:'Save map settings',stat:(articles,mountains)=>`${articles} pieces ≈ ${mountains} peaks`,pieces:n=>`${n} pieces`,articles:n=>`${n} independent pieces`,source:'Open article',close:'Close',shot:'Capture',exporting:'Rendering',saved:'Exported'}};
-let language=DATA.profile?.language==='en'?'en':'zh',hover=null,active=null;const q=()=>WORDS[language],copy=h=>language==='en'?{domain:h.domain_en||h.domain,rule:h.rule_en||h.rule,explanation:h.explanation_en||h.explanation}:{domain:h.domain,rule:h.rule,explanation:h.explanation},esc=s=>String(s).replace(/[&<>'"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[x]));
+const WORDS={zh:{brand:'文山.skill',slogan:'用山脉展示你的篇章',pageTitle:'文山.skill · 知识山峰',anonymous:'匿名',mapAria:'知识山峰地图',toolsAria:'地图控制台',contextIndex:'KNOWLEDGE PEAKS<br>EVIDENCE-GATED ATLAS<br>LOCAL AGENT',contextGuide:'选择一座山<br>阅读它的回答<br>回到原始文章',setupLabel:'设置',setupKicker:'文山.skill / 设置',setupTitle:'先确定这张图属于谁，分析什么。',nicknameField:'01 · 当前用户昵称',collectionField:'02 · 文章集合 URL',nicknamePlaceholder:'例如：Pakco',collectionPlaceholder:'粘贴 Obsidian 文件夹、本地集合或文章库 URL',setupHelp:'保存后更新地图署名与材料引用。真正的文章读取、证据筛选与重新生成，由本地 Agent 在此集合上执行。',setupSubmit:'保存此地图设置',stat:(articles,mountains)=>`${articles}文 ≈ ${mountains}山`,pieces:n=>`${n}篇`,articles:n=>`${n} 篇独立文章`,source:'查看文章',close:'关闭',shot:'截图',exporting:'生成中',saved:'已导出'},en:{brand:'Wenshan.skill',slogan:'Map your writing as mountains.',pageTitle:'Wenshan.skill · Knowledge Peaks',anonymous:'Anonymous',mapAria:'Knowledge mountain map',toolsAria:'Map controls',contextIndex:'KNOWLEDGE PEAKS<br>EVIDENCE-GATED ATLAS<br>LOCAL AGENT',contextGuide:'Choose a mountain<br>Read its answer<br>Return to the source',setupLabel:'Setup',setupKicker:'Wenshan.skill / SETUP',setupTitle:'Define whose map this is and which writing to analyze.',nicknameField:'01 · Author nickname',collectionField:'02 · Article collection URL',nicknamePlaceholder:'For example: Pakco',collectionPlaceholder:'Paste an Obsidian folder, local collection, or article-library URL',setupHelp:'Saving updates attribution and the collection reference. Your local Agent performs article reading, evidence review, and regeneration on that collection.',setupSubmit:'Save map settings',stat:(articles,mountains)=>`${articles} pieces ≈ ${mountains} peaks`,pieces:n=>`${n} pieces`,articles:n=>`${n} independent pieces`,source:'Open article',close:'Close',shot:'Capture',exporting:'Rendering',saved:'Exported'}};
+let language=DATA.profile?.language==='en'?'en':'zh',hover=null,active=null;const q=()=>WORDS[language],copy=h=>language==='en'?{label:h.label_en||h.label,answer:h.answer_en||h.answer}:{label:h.label,answer:h.answer},esc=s=>String(s).replace(/[&<>'"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[x]));
 const settingsKey='wenshan.skill.setup.v1';let settings={...(DATA.profile||{})};try{settings={...settings,...JSON.parse(localStorage.getItem(settingsKey)||'{}')}}catch(_){/* ponytail: file previews may not expose persistent storage. */}
 const all=DATA.territories.flatMap(t=>[{x:t.x,y:t.y},...t.points]),loX=Math.min(...all.map(p=>p.x)),hiX=Math.max(...all.map(p=>p.x)),loY=Math.min(...all.map(p=>p.y)),hiY=Math.max(...all.map(p=>p.y));
 const fit=(v,a,b,start,span)=>start+(v-a)/Math.max(.0001,b-a)*span;
@@ -186,10 +211,10 @@ function edgePoint(edge,x,y,a,b,d,z,level){const between=(u,v)=>u===v?.5:Math.ma
 function paintTerrain(h){const {g,nx,ny,max}=field(h.points),off=document.createElement('canvas'),o=off.getContext('2d'),c=COLORS[h.id];off.width=nx;off.height=ny;const im=o.createImageData(nx,ny);for(let i=0;i<g.length;i++){const value=Math.pow(g[i]/max,.66),p=i*4;if(value>.03){im.data[p]=c.rgb[0];im.data[p+1]=c.rgb[1];im.data[p+2]=c.rgb[2];im.data[p+3]=Math.round(14+value*102)}}o.putImageData(im,0,0);ctx.save();ctx.globalAlpha=.18;ctx.filter='blur(8px)';ctx.drawImage(off,10,14,W,H);ctx.restore();ctx.save();ctx.globalAlpha=.68;ctx.drawImage(off,0,0,W,H);ctx.restore();const rings=Math.min(10,Math.max(4,Math.round(Math.sqrt(h.count)+3)));ctx.save();ctx.strokeStyle=c.line;ctx.lineCap='round';for(let ring=1;ring<=rings;ring++){const level=max*(.12+ring/rings*.72);ctx.globalAlpha=.24+ring/rings*.34;ctx.lineWidth=1+ring*.1;ctx.beginPath();for(let y=0;y<ny-1;y++)for(let x=0;x<nx-1;x++){const a=g[y*nx+x],b=g[y*nx+x+1],d=g[(y+1)*nx+x+1],z=g[(y+1)*nx+x],mask=(a>=level?1:0)|(b>=level?2:0)|(d>=level?4:0)|(z>=level?8:0);for(const pair of CASES[mask]||[]){const u=edgePoint(pair[0],x,y,a,b,d,z,level),v=edgePoint(pair[1],x,y,a,b,d,z,level);ctx.moveTo(u[0]*W/(nx-1),u[1]*H/(ny-1));ctx.lineTo(v[0]*W/(nx-1),v[1]*H/(ny-1))}}ctx.stroke()}ctx.restore()}
 function wrap(text,x,y,width,line){let row='';for(const ch of [...text]){const next=row+ch;if(ctx.measureText(next).width>width&&row){ctx.fillText(row,x,y);y+=line;row=ch}else row=next}if(row)ctx.fillText(row,x,y)}
 function titleFont(text,maxWidth){let size=37;while(size>22){ctx.font=`650 ${size}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;if(ctx.measureText(text).width<=maxWidth)break;size-=1}return size}
-function label(h){const x=h.x*W,y=h.y*H,c=COLORS[h.id],words=q(),text=copy(h);ctx.save();ctx.textAlign='center';ctx.fillStyle=c.line;ctx.font='650 22px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';ctx.fillText(words.pieces(h.count),x,y-42);ctx.fillStyle=c.dot;ctx.beginPath();ctx.moveTo(x,y-33);ctx.lineTo(x-12,y-3);ctx.lineTo(x+12,y-3);ctx.closePath();ctx.fill();if(text.domain){ctx.fillStyle='#666a62';ctx.font='600 11px ui-monospace,SFMono-Regular,Menlo,monospace';ctx.fillText(text.domain.toUpperCase(),x,y+22)}ctx.fillStyle='#242722';const size=titleFont(text.rule,330);ctx.font=`650 ${size}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;ctx.fillText(text.rule,x,y+58);ctx.fillStyle='#575a53';ctx.font='12px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';wrap(text.explanation,x,y+87,310,19);ctx.restore()}
+function label(h){const x=h.x*W,y=h.y*H,c=COLORS[h.id],words=q(),text=copy(h);ctx.save();ctx.textAlign='center';ctx.fillStyle=c.line;ctx.font='650 22px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';ctx.fillText(words.pieces(h.count),x,y-31);ctx.fillStyle=c.dot;ctx.beginPath();ctx.moveTo(x,y-22);ctx.lineTo(x-12,y+8);ctx.lineTo(x+12,y+8);ctx.closePath();ctx.fill();ctx.fillStyle='#242722';const size=titleFont(text.label,330);ctx.font=`650 ${size}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;ctx.fillText(text.label,x,y+52);ctx.fillStyle='#575a53';ctx.font='12px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';wrap(text.answer,x,y+81,310,19);ctx.restore()}
 function draw(){ctx.fillStyle='#e8e5dc';ctx.fillRect(0,0,W,H);ctx.save();ctx.strokeStyle='#73776d';ctx.globalAlpha=.035;for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*193)%W,(i*257)%H,84+i*24,0,Math.PI*2);ctx.stroke()}ctx.restore();for(const hill of hills)paintTerrain(hill);for(const hill of hills){ctx.save();for(const p of hill.points){ctx.beginPath();ctx.arc(p.x*W,p.y*H,3.7,0,Math.PI*2);ctx.fillStyle=COLORS[hill.id].dot;ctx.globalAlpha=.92;ctx.fill();ctx.strokeStyle='#e8e5dc';ctx.globalAlpha=.9;ctx.lineWidth=1.2;ctx.stroke()}ctx.restore();label(hill)}}
 function nearest(event){const box=canvas.getBoundingClientRect(),x=(event.clientX-box.left)*W/box.width,y=(event.clientY-box.top)*H/box.height;let best=null,d=Infinity;for(const hill of hills)for(const p of hill.points){const value=(p.x*W-x)**2+(p.y*H-y)**2;if(value<d){best={hill,p};d=value}}return d<18**2?best:null}
-function detail(hill){active=hill;const words=q(),text=copy(hill),links=hill.points.slice(0,6).map(p=>`<a href="${esc(p.url)}">${esc(p.title)}</a>`).join(''),domain=text.domain?` · ${esc(text.domain)}`:'';inspector.innerHTML=`<div><small class="evidence">${words.articles(hill.count)}${domain}</small><h2>${esc(text.rule)}</h2><p>${esc(text.explanation)}</p></div><button class="close" type="button" aria-label="${words.close}">×</button><div class="articles">${links}</div>`;inspector.querySelector('.close').onclick=()=>{active=null;inspector.classList.remove('show')};inspector.classList.add('show')}
+function detail(hill){active=hill;const words=q(),text=copy(hill),links=hill.points.slice(0,6).map(p=>`<a href="${esc(p.url)}">${esc(p.title)}</a>`).join('');inspector.innerHTML=`<div><small class="evidence">${words.articles(hill.count)}</small><h2>${esc(text.label)}</h2><p>${esc(text.answer)}</p></div><button class="close" type="button" aria-label="${words.close}">×</button><div class="articles">${links}</div>`;inspector.querySelector('.close').onclick=()=>{active=null;inspector.classList.remove('show')};inspector.classList.add('show')}
 function chrome(){const words=q(),articleCount=hills.reduce((n,h)=>n+h.count,0);document.documentElement.lang=language==='zh'?'zh-CN':'en';document.title=words.pageTitle;document.querySelector('#wordmark').textContent=words.brand;document.querySelector('#slogan').textContent=words.slogan;document.querySelector('#meta').textContent=words.stat(articleCount,hills.length);document.querySelector('#nickname').textContent=settings.nickname||words.anonymous;document.querySelector('#language-label').textContent=language==='zh'?'EN':'中';document.querySelector('#snapshot-label').textContent=words.shot;document.querySelector('#setup-label').textContent=words.setupLabel;document.querySelector('#context-title').textContent=words.brand;document.querySelector('#context-index').innerHTML=words.contextIndex;document.querySelector('#context-guide').innerHTML=words.contextGuide;document.querySelector('#map').setAttribute('aria-label',words.mapAria);document.querySelector('#tools').setAttribute('aria-label',words.toolsAria);document.querySelector('#setup-close').setAttribute('aria-label',words.close);document.querySelector('#setup-kicker').textContent=words.setupKicker;document.querySelector('#setup-title').textContent=words.setupTitle;document.querySelector('#nickname-field-label').textContent=words.nicknameField;document.querySelector('#collection-field-label').textContent=words.collectionField;document.querySelector('#nickname-input').placeholder=words.nicknamePlaceholder;document.querySelector('#collection-input').placeholder=words.collectionPlaceholder;document.querySelector('#setup-help').textContent=words.setupHelp;document.querySelector('#setup-submit').textContent=words.setupSubmit}
 function openSetup(){document.querySelector('#nickname-input').value=settings.nickname||'';document.querySelector('#collection-input').value=settings.collection_url||'';document.querySelector('#setup-sheet').classList.add('show');document.querySelector('#setup-sheet').setAttribute('aria-hidden','false');document.querySelector('#nickname-input').focus()}function closeSetup(){document.querySelector('#setup-sheet').classList.remove('show');document.querySelector('#setup-sheet').setAttribute('aria-hidden','true')}
 document.querySelector('#setup').onclick=openSetup;document.querySelector('#setup-close').onclick=closeSetup;document.querySelector('#setup-sheet').onclick=e=>{if(e.target===e.currentTarget)closeSetup()};document.querySelector('#setup-form').onsubmit=e=>{e.preventDefault();const fields=e.currentTarget.elements;settings.nickname=fields.namedItem('nickname').value.trim();settings.collection_url=fields.namedItem('collection').value.trim();try{localStorage.setItem(settingsKey,JSON.stringify(settings))}catch(_){/* ponytail: preview remains usable without persistence. */}chrome();closeSetup()};
@@ -217,7 +242,7 @@ def main() -> None:
     )
     (atlas / f"{basename}.html").write_text(html, encoding="utf-8")
     if args.language == "zh":
-        titles = "、".join(f"{item['rule']}（{item['count']}）" for item in payload["territories"])
+        titles = "、".join(f"{item['label']}（{item['count']}）" for item in payload["territories"])
         markdown = f"""---
 tags: [knowledge-peaks, evidence-gated-demo]
 generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
@@ -228,12 +253,12 @@ scope: {scope.name}
 
 [[{basename}.html|打开交互式地图]]
 
-本图只显示有至少 **3 篇独立 canonical 文章** 支撑的抽离规则：{titles}。
+本图只显示由 Agent 从当前语料识别、且有至少 **3 篇独立 canonical 文章** 支撑的场景或行业山峰：{titles}。
 
 未通过证据门槛的候选方向不会显示为占位、“待勘探”或虚构山体。
 """
     else:
-        titles = ", ".join(f"{item['rule_en']} ({item['count']})" for item in payload["territories"])
+        titles = ", ".join(f"{item['label_en']} ({item['count']})" for item in payload["territories"])
         markdown = f"""---
 tags: [knowledge-peaks, evidence-gated-demo]
 generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
@@ -244,7 +269,7 @@ scope: {scope.name}
 
 [[{basename}.html|Open the interactive map]]
 
-This map shows only extracted rules supported by at least **three independent canonical articles**: {titles}.
+This map shows only Agent-identified scene or industry peaks supported by at least **three independent canonical articles**: {titles}.
 
 Candidate directions below the evidence gate do not appear as placeholders, “to be explored” labels, or invented terrain.
 """
