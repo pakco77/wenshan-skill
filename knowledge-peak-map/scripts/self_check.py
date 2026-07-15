@@ -7,7 +7,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from render_territory_demo import build_payload
+from render_territory_demo import build_payload, validate_peak_labels
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -57,6 +57,21 @@ def main() -> None:
         (vault / ".obsidian").rmdir()
         markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert markdown_payload["territories"][0]["points"][0]["url"].startswith("file://")
+
+        for invalid_label in ("方向判断，先于执行", "方向判断优先于执行"):
+            invalid = {"version": 3, "territories": [{
+                "id": "abstract-rule",
+                "label": invalid_label,
+                "label_kind": "practice",
+                "label_rationale": "三篇文章支持这条判断",
+                "status": "evidenced",
+            }]}
+            try:
+                validate_peak_labels(invalid)
+            except SystemExit:
+                pass
+            else:
+                raise AssertionError(f"abstract conclusion passed as a mountain title: {invalid_label}")
         print("PASS scene-and-industry label schema, evidence gate, canonical filter, layout, and Markdown fallback")
 
 

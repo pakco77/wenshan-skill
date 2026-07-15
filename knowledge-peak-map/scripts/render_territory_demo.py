@@ -11,20 +11,17 @@ import argparse
 import hashlib
 import json
 import math
+import re
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlencode
 
 
-ANCHORS = {
-    "ai-tools": (0.30, 0.50),
-    "product-manager": (0.56, 0.72),
-    "cnc": (0.25, 0.74),
-    "smart-hardware": (0.76, 0.46),
-    "ai-cognition": (0.70, 0.24),
-    "parenting-life": (0.75, 0.76),
-}
 LABEL_KINDS = {"scene", "industry", "role", "practice", "knowledge_domain"}
+CONCLUSION_PATTERNS = (
+    r"优先于|先于|取决于|决定了|来自于|无法被|应该|必须|更重要|正在|已经",
+    r"\b(should|must|matters? more|depends? on|comes? from|cannot be)\b",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -68,7 +65,11 @@ def validate_peak_labels(data: dict) -> None:
             raise SystemExit(f"{territory.get('id', '<unknown>')}: label_kind must be one of {sorted(LABEL_KINDS)}")
         if not label or not rationale:
             raise SystemExit(f"{territory.get('id', '<unknown>')}: label and label_rationale are required")
-        if len(label) > 40 or any(mark in label for mark in "，。！？；：,.!?;:"):
+        if (
+            len(label) > 40
+            or any(mark in label for mark in "，。！？；：,.!?;:")
+            or any(re.search(pattern, label, re.IGNORECASE) for pattern in CONCLUSION_PATTERNS)
+        ):
             raise SystemExit(f"{territory.get('id', '<unknown>')}: label must be a compact scene or industry keyword, not a sentence")
 
 
@@ -100,6 +101,10 @@ def generic_anchors(total: int) -> list[tuple[float, float]]:
     """Lay out arbitrary evidenced territories without topic-specific semantics."""
     if total == 1:
         return [(0.50, 0.48)]
+    if total == 2:
+        return [(0.34, 0.46), (0.68, 0.54)]
+    if total == 3:
+        return [(0.34, 0.35), (0.68, 0.34), (0.53, 0.70)]
     columns = max(2, math.ceil(math.sqrt(total * 0.76)))
     rows = math.ceil(total / columns)
     result = []
@@ -130,8 +135,7 @@ def build_payload(scope: Path, data: dict, nickname: str, collection_url: str, l
     ]
     if not candidates:
         raise SystemExit("No territory has the minimum three independent canonical cards.")
-    presets_apply = all(territory.get("id") in ANCHORS for territory in candidates)
-    anchors = [ANCHORS[territory["id"]] for territory in candidates] if presets_apply else generic_anchors(len(candidates))
+    anchors = generic_anchors(len(candidates))
     territories = []
     for territory, (ax, ay) in zip(candidates, anchors):
         ident, cards = territory.get("id"), territory.get("cards", [])
