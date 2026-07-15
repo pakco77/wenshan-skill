@@ -1,0 +1,4 @@
+interface:
+  display_name: "文山.skill / Wenshan.skill"
+  short_description: "从已审阅篇章抽离可迁移规则，并生成中英双语知识山图"
+  default_prompt: "Use $knowledge-peak-map to extract transferable rules from my reviewed article collection and render a bilingual evidence-gated Wenshan contour map."

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">文山.skill 与 Wenshan.skill 双语效果 Demo</title>
+  <desc id="desc">同一组知识山在中文和英文界面中的对照，文章证据、篇数和等高线保持一致。</desc>
+  <defs>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#c8cbc3" stroke-width="1" opacity=".32"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <style>
+      .brand{font:650 27px -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;fill:#202621;letter-spacing:1px}
+      .slogan{font:400 13px -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;fill:#626960}
+      .user{font:650 13px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#313832;letter-spacing:1px}
+      .stat{font:650 14px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#313832}
+      .mountain{font:650 20px -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;fill:#252c27}
+      .mountain-en{font:650 14px -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;fill:#252c27}
+      .domain{font:600 8px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#697069;letter-spacing:.7px}
+      .answer{font:400 9px -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;fill:#555e57}
+      .count{font:650 13px ui-monospace,SFMono-Regular,Menlo,monospace}
+      .contour-a{fill:none;stroke:#8c7350;stroke-width:1.5;opacity:.72}
+      .contour-b{fill:none;stroke:#54776f;stroke-width:1.5;opacity:.72}
+      .contour-c{fill:none;stroke:#805d58;stroke-width:1.5;opacity:.72}
+      .dot{fill:#3f5149;stroke:#efede6;stroke-width:1.5}
+    </style>
+  </defs>
+  <rect width="1200" height="900" fill="#cbc9c1"/>
+  <text x="60" y="56" class="user">BILINGUAL OUTPUT · SAME EVIDENCE</text>
+  <text x="1140" y="56" text-anchor="end" class="user">54 PIECES · 3 PEAKS</text>
+
+  <g transform="translate(76 86)">
+    <rect width="484" height="754" rx="2" fill="#efede6" stroke="#858b84" stroke-width="1.5"/>
+    <rect x="8" y="8" width="468" height="738" fill="none" stroke="#c5c7c0"/>
+    <text x="28" y="45" class="brand">文山.skill</text>
+    <text x="28" y="70" class="slogan">用山脉展示你的篇章</text>
+    <text x="456" y="43" text-anchor="end" class="user">PAKCO</text>
+    <text x="456" y="68" text-anchor="end" class="stat">54文 ≈ 3山</text>
+    <line x1="28" y1="88" x2="456" y2="88" stroke="#a8aca6"/>
+    <rect x="28" y="106" width="428" height="610" fill="url(#grid)" stroke="#9a9f98"/>
+    <ellipse cx="205" cy="380" rx="138" ry="166" fill="#9b7b4f" opacity=".10" filter="url(#shadow)"/>
+    <ellipse cx="340" cy="242" rx="94" ry="106" fill="#5e8178" opacity=".12" filter="url(#shadow)"/>
+    <ellipse cx="331" cy="566" rx="102" ry="97" fill="#8a625b" opacity=".10" filter="url(#shadow)"/>
+    <g transform="translate(0 2)">
+      <path class="contour-a" d="M70 444C51 366 76 274 142 222C210 167 292 204 314 280C337 359 303 463 237 510C171 556 91 520 70 444Z"/>
+      <path class="contour-a" d="M88 435C70 369 91 290 148 245C206 199 276 229 294 293C314 360 285 444 228 483C170 522 105 496 88 435Z"/>
+      <path class="contour-a" d="M106 425C91 371 109 307 155 271C202 234 259 258 275 307C292 360 268 426 220 458C173 489 121 474 106 425Z"/>
+      <path class="contour-a" d="M124 415C112 373 127 327 161 300C197 272 242 291 255 324C270 363 251 410 214 433C177 456 136 450 124 415Z"/>
+      <path class="contour-a" d="M142 404C134 377 145 348 168 330C192 312 224 324 235 345C247 369 233 395 208 410C183 425 151 425 142 404Z"/>
+    </g>
+    <g>
+      <path class="contour-b" d="M263 293C242 251 252 187 294 157C336 126 394 145 415 188C437 233 417 291 375 317C332 343 283 335 263 293Z"/>
+      <path class="contour-b" d="M280 284C263 251 272 203 305 179C338 155 380 170 397 201C415 234 399 278 366 298C333 318 296 316 280 284Z"/>
+      <path class="contour-b" d="M297 275C285 252 292 220 316 202C340 185 368 196 381 218C394 241 382 270 358 283C333 297 309 296 297 275Z"/>
+      <path class="contour-b" d="M315 265C309 252 313 235 327 225C342 215 357 221 365 233C373 247 365 262 351 269C336 276 321 276 315 265Z"/>
+    </g>
+    <g>
+      <path class="contour-c" d="M241 622C224 580 242 520 286 497C332 473 389 493 407 536C425 580 401 631 356 651C310 670 258 663 241 622Z"/>
+      <path class="contour-c" d="M260 612C247 580 262 539 296 521C330 503 372 519 387 548C402 579 383 615 349 630C315 645 273 642 260 612Z"/>
+      <path class="contour-c" d="M280 601C271 582 281 556 307 543C332 531 360 541 370 560C381 581 367 602 342 612C316 622 289 620 280 601Z"/>
+    </g>
+    <g class="dot"><circle cx="128" cy="392" r="4"/><circle cx="153" cy="345" r="4"/><circle cx="182" cy="405" r="4"/><circle cx="207" cy="367" r="4"/><circle cx="232" cy="397" r="4"/><circle cx="251" cy="350" r="4"/><circle cx="282" cy="329" r="4"/><circle cx="159" cy="449" r="4"/><circle cx="214" cy="454" r="4"/><circle cx="310" cy="236" r="4"/><circle cx="342" cy="211" r="4"/><circle cx="372" cy="249" r="4"/><circle cx="304" cy="571" r="4"/><circle cx="344" cy="552" r="4"/><circle cx="366" cy="588" r="4"/></g>
+    <text x="206" y="347" text-anchor="middle" class="count" fill="#735633">35篇</text><path d="M206 357l9 19h-18Z" fill="#62492f"/><text x="206" y="393" text-anchor="middle" class="domain">AI工具 · 证据域</text><text x="206" y="417" text-anchor="middle" class="mountain">摩擦决定采用</text><text x="206" y="435" text-anchor="middle" class="answer">能嵌入工作流，比功能最强更重要。</text>
+    <text x="340" y="202" text-anchor="middle" class="count" fill="#3f6e65">13篇</text><path d="M340 212l9 19h-18Z" fill="#365e56"/><text x="340" y="248" text-anchor="middle" class="domain">AI认知 · 证据域</text><text x="340" y="272" text-anchor="middle" class="mountain">能力普及，判断升值</text><text x="340" y="290" text-anchor="middle" class="answer">通用能力越便宜，真实判断越稀缺。</text>
+    <text x="330" y="544" text-anchor="middle" class="count" fill="#744a44">6篇</text><path d="M330 554l9 19h-18Z" fill="#68423d"/><text x="330" y="590" text-anchor="middle" class="domain">产品经理 · 证据域</text><text x="330" y="614" text-anchor="middle" class="mountain">方向判断先于执行</text><text x="330" y="632" text-anchor="middle" class="answer">先判断值不值得做，再加速实现。</text>
+    <text x="28" y="739" class="user">中文 · 原文标题不翻译</text>
+  </g>
+
+  <g transform="translate(640 86)">
+    <rect width="484" height="754" rx="2" fill="#efede6" stroke="#858b84" stroke-width="1.5"/>
+    <rect x="8" y="8" width="468" height="738" fill="none" stroke="#c5c7c0"/>
+    <text x="28" y="45" class="brand">Wenshan.skill</text>
+    <text x="28" y="70" class="slogan">Map your writing as mountains.</text>
+    <text x="456" y="43" text-anchor="end" class="user">PAKCO</text>
+    <text x="456" y="68" text-anchor="end" class="stat">54 pieces ≈ 3 peaks</text>
+    <line x1="28" y1="88" x2="456" y2="88" stroke="#a8aca6"/>
+    <rect x="28" y="106" width="428" height="610" fill="url(#grid)" stroke="#9a9f98"/>
+    <ellipse cx="205" cy="380" rx="138" ry="166" fill="#9b7b4f" opacity=".10" filter="url(#shadow)"/>
+    <ellipse cx="340" cy="242" rx="94" ry="106" fill="#5e8178" opacity=".12" filter="url(#shadow)"/>
+    <ellipse cx="331" cy="566" rx="102" ry="97" fill="#8a625b" opacity=".10" filter="url(#shadow)"/>
+    <g transform="translate(0 2)"><path class="contour-a" d="M70 444C51 366 76 274 142 222C210 167 292 204 314 280C337 359 303 463 237 510C171 556 91 520 70 444Z"/><path class="contour-a" d="M88 435C70 369 91 290 148 245C206 199 276 229 294 293C314 360 285 444 228 483C170 522 105 496 88 435Z"/><path class="contour-a" d="M106 425C91 371 109 307 155 271C202 234 259 258 275 307C292 360 268 426 220 458C173 489 121 474 106 425Z"/><path class="contour-a" d="M124 415C112 373 127 327 161 300C197 272 242 291 255 324C270 363 251 410 214 433C177 456 136 450 124 415Z"/><path class="contour-a" d="M142 404C134 377 145 348 168 330C192 312 224 324 235 345C247 369 233 395 208 410C183 425 151 425 142 404Z"/></g>
+    <g><path class="contour-b" d="M263 293C242 251 252 187 294 157C336 126 394 145 415 188C437 233 417 291 375 317C332 343 283 335 263 293Z"/><path class="contour-b" d="M280 284C263 251 272 203 305 179C338 155 380 170 397 201C415 234 399 278 366 298C333 318 296 316 280 284Z"/><path class="contour-b" d="M297 275C285 252 292 220 316 202C340 185 368 196 381 218C394 241 382 270 358 283C333 297 309 296 297 275Z"/><path class="contour-b" d="M315 265C309 252 313 235 327 225C342 215 357 221 365 233C373 247 365 262 351 269C336 276 321 276 315 265Z"/></g>
+    <g><path class="contour-c" d="M241 622C224 580 242 520 286 497C332 473 389 493 407 536C425 580 401 631 356 651C310 670 258 663 241 622Z"/><path class="contour-c" d="M260 612C247 580 262 539 296 521C330 503 372 519 387 548C402 579 383 615 349 630C315 645 273 642 260 612Z"/><path class="contour-c" d="M280 601C271 582 281 556 307 543C332 531 360 541 370 560C381 581 367 602 342 612C316 622 289 620 280 601Z"/></g>
+    <g class="dot"><circle cx="128" cy="392" r="4"/><circle cx="153" cy="345" r="4"/><circle cx="182" cy="405" r="4"/><circle cx="207" cy="367" r="4"/><circle cx="232" cy="397" r="4"/><circle cx="251" cy="350" r="4"/><circle cx="282" cy="329" r="4"/><circle cx="159" cy="449" r="4"/><circle cx="214" cy="454" r="4"/><circle cx="310" cy="236" r="4"/><circle cx="342" cy="211" r="4"/><circle cx="372" cy="249" r="4"/><circle cx="304" cy="571" r="4"/><circle cx="344" cy="552" r="4"/><circle cx="366" cy="588" r="4"/></g>
+    <text x="206" y="347" text-anchor="middle" class="count" fill="#735633">35 pieces</text><path d="M206 357l9 19h-18Z" fill="#62492f"/><text x="206" y="393" text-anchor="middle" class="domain">AI TOOLS · EVIDENCE DOMAIN</text><text x="206" y="417" text-anchor="middle" class="mountain-en">Friction Determines Adoption</text><text x="206" y="435" text-anchor="middle" class="answer">Workflow fit beats feature strength.</text>
+    <text x="340" y="202" text-anchor="middle" class="count" fill="#3f6e65">13 pieces</text><path d="M340 212l9 19h-18Z" fill="#365e56"/><text x="340" y="248" text-anchor="middle" class="domain">AI COGNITION · EVIDENCE DOMAIN</text><text x="340" y="272" text-anchor="middle" class="mountain-en">Capability Spreads, Judgment Compounds</text><text x="340" y="290" text-anchor="middle" class="answer">Cheaper capability makes judgment scarcer.</text>
+    <text x="330" y="544" text-anchor="middle" class="count" fill="#744a44">6 pieces</text><path d="M330 554l9 19h-18Z" fill="#68423d"/><text x="330" y="590" text-anchor="middle" class="domain">PRODUCT MGMT · EVIDENCE DOMAIN</text><text x="330" y="614" text-anchor="middle" class="mountain-en">Direction Before Execution</text><text x="330" y="632" text-anchor="middle" class="answer">Decide what deserves building first.</text>
+    <text x="28" y="739" class="user">ENGLISH · SOURCE TITLES STAY ORIGINAL</text>
+  </g>
+</svg>
