@@ -71,3 +71,7 @@ python3 knowledge-peak-map/scripts/render_territory_demo.py \
 - 中英文页面共享同一份证据数据，文章标题始终保留原文。
 
 完整 Agent 指令与数据契约见 [`knowledge-peak-map/SKILL.md`](knowledge-peak-map/SKILL.md)。
+
+## License
+
+[MIT](LICENSE) © 2026 Pakco
