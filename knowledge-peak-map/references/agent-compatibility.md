@@ -8,21 +8,28 @@ Do not maintain separate semantic implementations for Codex, Claude, Claude Code
 
 ## Recommended installation
 
-The `skills` CLI can discover nested skills in a GitHub repository and install one Skill for multiple supported agents:
+The `skills` CLI can discover the nested Skill and ask which detected Agent should receive it:
 
 ```bash
 npx skills add pakco77/wenshan-skill \
   --skill knowledge-peak-map \
-  --agent '*' \
-  --global \
-  --yes \
-  --full-depth
+  --global
 ```
 
 List before installing:
 
 ```bash
 npx skills add pakco77/wenshan-skill --list
+```
+
+For a non-interactive install to every supported Agent detected on the machine:
+
+```bash
+npx skills add pakco77/wenshan-skill \
+  --skill knowledge-peak-map \
+  --agent '*' \
+  --global \
+  --yes
 ```
 
 If a host is not supported by the installer, clone the repository and copy or symlink the complete `knowledge-peak-map` folder into that host's recognized Skills directory.

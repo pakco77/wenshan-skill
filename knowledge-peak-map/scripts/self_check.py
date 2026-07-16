@@ -7,7 +7,12 @@ import json
 import tempfile
 from pathlib import Path
 
-from render_territory_demo import build_payload, validate_peak_labels
+from render_territory_demo import (
+    build_payload,
+    validate_evidence_labels,
+    validate_method_contract,
+    validate_peak_labels,
+)
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -53,7 +58,46 @@ def main() -> None:
         assert all(item["count"] == 3 for item in payload["territories"])
         assert payload["territories"][0]["label_en"] == "Industry 0"
         assert payload["territories"][0]["answer"] == "Agent 对该行业文章的回答"
+        assert payload["generated_at"]
         assert len({(item["x"], item["y"]) for item in payload["territories"]}) == 3
+        night_payload = build_payload(
+            scope,
+            {"version": 3, "territories": territories},
+            "",
+            str(scope),
+            "en",
+            "obsidian-atlas",
+        )
+        assert night_payload["profile"]["theme"] == "obsidian-atlas"
+        assert night_payload["territories"] == payload["territories"]
+        assert night_payload["relations"] == payload["relations"]
+        evidence_labels = {
+            "territories": [{
+                **territories[0],
+                "evidence_labels": [
+                    {
+                        "label": "企业数字化",
+                        "label_en": "Enterprise Digitization",
+                        "article_ids": [territories[0]["cards"][0]["id"], territories[0]["cards"][1]["id"]],
+                        "rationale": "两篇文章共同讨论企业数字化。",
+                    },
+                    {
+                        "label": "业务场景",
+                        "label_en": "Business Scenarios",
+                        "article_ids": [territories[0]["cards"][1]["id"], territories[0]["cards"][2]["id"]],
+                        "rationale": "两篇文章共同讨论具体业务场景。",
+                    },
+                ],
+            }],
+        }
+        validate_evidence_labels(evidence_labels)
+        evidence_labels["territories"][0]["evidence_labels"][0]["article_ids"] = ["outside-card", "another-card"]
+        try:
+            validate_evidence_labels(evidence_labels)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("An evidence label referencing cards outside its mountain passed validation")
         (vault / ".obsidian").rmdir()
         markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert markdown_payload["territories"][0]["points"][0]["url"].startswith("file://")
@@ -72,7 +116,92 @@ def main() -> None:
                 pass
             else:
                 raise AssertionError(f"abstract conclusion passed as a mountain title: {invalid_label}")
-        print("PASS scene-and-industry label schema, evidence gate, canonical filter, layout, and Markdown fallback")
+
+        eglfa = {
+            "version": 4,
+            "analysis_method": "EGLFA",
+            "generated_at": "2026-07-16T10:30+08:00",
+            "corpus": {"time_range": ["2026-01-01", "2026-07-01"]},
+            "stability_review": {"status": "passed"},
+            "territories": [{
+                "id": "reviewed-peak",
+                "status": "evidenced",
+                "boundary_review": {"status": "passed", "answer_coverage": 0.75},
+            }],
+        }
+        validate_method_contract(eglfa)
+        eglfa["territories"][0]["boundary_review"]["answer_coverage"] = 0.69
+        try:
+            validate_method_contract(eglfa)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("EGLFA subtitle coverage below 70% passed validation")
+
+        reviewed_peak = {
+            "id": "reviewed-peak",
+            "status": "evidenced",
+            "boundary_review": {"status": "passed", "answer_coverage": 0.75},
+        }
+        taxonomy = {
+            "axis": "long_term_domain",
+            "main_mountain_count": 5,
+            "count_limit": 5,
+            "same_level": True,
+            "no_parent_child_pairs": True,
+            "primary_assignment_exclusive": True,
+            "displayed_units_covered": True,
+            "status": "passed",
+        }
+        eglfa_v5 = {
+            **eglfa,
+            "version": 5,
+            "taxonomy_review": taxonomy,
+            "territories": [{**reviewed_peak, "id": f"peak-{index}"} for index in range(5)],
+        }
+        validate_method_contract(eglfa_v5)
+        eglfa_v5["territories"].append({**reviewed_peak, "id": "peak-6"})
+        eglfa_v5["taxonomy_review"]["main_mountain_count"] = 6
+        try:
+            validate_method_contract(eglfa_v5)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("More than five public main mountains passed validation")
+
+        range_review = {
+            "layout_method": "reviewed_relation_graph",
+            "classification_axis": "primary_problem_space",
+            "primary_assignment_exclusive": True,
+            "displayed_units_covered": True,
+            "relations_auditable": True,
+            "main_mountains_mece": True,
+            "contained_practices_as_subpeaks": True,
+            "embedding_distance_used": False,
+            "status": "passed",
+        }
+        eglfa_v6 = {
+            **eglfa,
+            "version": 6,
+            "range_review": range_review,
+            "relations": [{
+                "source": "peak-0",
+                "target": "peak-1",
+                "strength": 0.8,
+                "reason": "Shared reviewed practice",
+            }],
+            "territories": [{**reviewed_peak, "id": f"peak-{index}"} for index in range(8)],
+        }
+        validate_method_contract(eglfa_v6)
+        eglfa_v6["range_review"]["embedding_distance_used"] = True
+        try:
+            validate_method_contract(eglfa_v6)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("Embedding-derived distance passed the v6 range contract")
+
+        print("PASS EGLFA v6 range contract, auditable evidence labels, unlimited evidence mountains, reviewed relations, no embedding distance, cross-theme semantic parity, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":
