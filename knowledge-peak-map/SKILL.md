@@ -1,6 +1,6 @@
 ---
 name: knowledge-peak-map
-description: Apply Evidence-Gated Longitudinal Framework Analysis (EGLFA) to reviewed Obsidian or Markdown writing, then create bilingual Wenshan contour maps whose concrete scene or industry peaks are supported by canonical evidence. Use when the user asks for 文山.skill, Wenshan.skill, longitudinal thematic analysis, knowledge mountains, knowledge peaks, article terrain, contour visualization, or a personal knowledge map built without embedding-based similarity.
+description: Turn a user-selected Obsidian or Markdown writing collection into a bilingual Wenshan contour map whose mountains, article counts, and answers all trace back to canonical source evidence. Use for 文山.skill, Wenshan.skill, personal knowledge mountains, longitudinal writing analysis, article terrain, contour maps, or requests to identify recurring scenes and industries without embedding-based clustering.
 ---
 
 # 文山.skill / Wenshan.skill
@@ -10,7 +10,9 @@ description: Apply Evidence-Gated Longitudinal Framework Analysis (EGLFA) to rev
 **中文：用山脉展示你的篇章。** Read [中文工作流](references/workflow.zh.md).
 **English: Map your writing as mountains.** Read the [English workflow](references/workflow.en.md).
 
-Analyze personal writing with **Evidence-Gated Longitudinal Framework Analysis (EGLFA)**: a Wenshan-defined composite specification, not an established published method name. It combines the Framework Method, qualitative content analysis, grounded-theory coding, longitudinal thematic analysis, and argument mining. Read the detailed [中文方法规格](references/methodology.zh.md) or [English method specification](references/methodology.en.md).
+Review authorship and document quality, resolve draft/final versions, identify concrete scene or industry mountains, and render a traceable contour map without embedding-based similarity.
+
+The analysis method is **Evidence-Gated Longitudinal Framework Analysis (EGLFA)**: a Wenshan-defined composite specification, not an established published method name. It combines the Framework Method, qualitative content analysis, grounded-theory coding, longitudinal thematic analysis, and argument mining. Read the detailed [中文方法规格](references/methodology.zh.md) or [English method specification](references/methodology.en.md).
 
 Read only what the task needs: [source ingestion](references/article-ingestion.md), [data contract](references/data-contract.md), [host installation](references/agent-compatibility.md), or the [Obsidian shell](references/obsidian-plugin.zh.md).
 

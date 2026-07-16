@@ -1,117 +1,184 @@
-# 文山.skill
+# 文山.skill / Wenshan.skill
 
-> 用山脉展示你的篇章。
+> 把一组 Markdown 篇章，变成一张能回到原文的个人知识山脉地图。
 
-![License: MIT](https://img.shields.io/badge/license-MIT-2f332f)
-![Agent Skill](https://img.shields.io/badge/Agent-Skill-545a54)
-![No Embeddings](https://img.shields.io/badge/embeddings-none-777b75)
+[![Install with skills.sh](https://img.shields.io/badge/Install-skills.sh-d8ccb2?style=flat-square&labelColor=252520)](https://skills.sh/pakco77/wenshan-skill)
+[![Agent Skills](https://img.shields.io/badge/Agent-Skills-777064?style=flat-square)](https://agentskills.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-555047?style=flat-square)](LICENSE)
+![Local first](https://img.shields.io/badge/Local--first-no%20upload-777064?style=flat-square)
+![No embeddings](https://img.shields.io/badge/Embeddings-none-777064?style=flat-square)
 
-把一组 Markdown 或 Obsidian 篇章，经过语义审阅、版本归并和证据门槛判断，生成一张可以回到原文的个人知识山脉地图。
+![文山.skill 中英文知识山脉地图与文章证据抽屉](assets/wenshan-showcase.png)
 
-文山不照抄文件夹，不用词频冒充洞察，也不依赖 embedding 猜文章距离。山名是 Agent 从语料中归纳出的长期问题空间，篇数是积累量，副标题是作者在这个方向上逐渐形成的回答。
+文山先审阅文章、排除脏数据、归并草稿与成稿，再从**场景、行业、角色和实践**中归纳主山。每座山必须通过证据门；每一个篇数、证据点和副标题都能回到原文。
+
+它不是文件夹统计图，也不是 embedding 聚类图。**山名代表反复写作的具体问题空间，篇数代表独立文章积累量，副标题代表作者目前形成的回答。**
+
+---
+
+## 1 分钟安装
+
+需要 Node.js、Python 3.10+，以及一个能读取本地文件的 Agent。
 
 ```bash
+npx skills add pakco77/wenshan-skill --skill knowledge-peak-map -g
+```
+
+安装器会识别 Codex、Claude Code 等兼容宿主。确认是否发现 Skill：
+
+```bash
+npx skills add pakco77/wenshan-skill --list
+```
+
+<details>
+<summary>指定 Agent 或安装到全部兼容 Agent</summary>
+
+```bash
+# Codex
+npx skills add pakco77/wenshan-skill \
+  --skill knowledge-peak-map \
+  --agent codex \
+  --global \
+  --yes
+
+# Claude Code
+npx skills add pakco77/wenshan-skill \
+  --skill knowledge-peak-map \
+  --agent claude-code \
+  --global \
+  --yes
+
+# 安装到本机所有被识别的兼容 Agent
 npx skills add pakco77/wenshan-skill \
   --skill knowledge-peak-map \
   --agent '*' \
   --global \
-  --yes \
-  --full-depth
+  --yes
 ```
 
-跨 Agent 使用：Codex、Claude Code、CodeWhale、CodeBuddy、WorkBuddy，以及其他支持 [Agent Skills](https://agentskills.io/) 的宿主。
+CodeWhale、CodeBuddy、WorkBuddy 或其他宿主的安装方式见
+[Agent 兼容与手动安装](knowledge-peak-map/references/agent-compatibility.md)。
 
-看效果 · 装上就能用 · 判断逻辑 · 真实案例 · 方法说明 · 视觉皮肤
+</details>
 
 ---
 
-## Demo
+## 第一次使用
 
-![文山.skill 黑白灰羊皮纸山脉地图](knowledge-peak-map/assets/demo-bilingual.png)
-
-当前默认皮肤是 `survey-parchment`：黑白灰、羊皮纸、测绘仪器感；保留等高线作为核心视觉资产。
-
----
-
-## 装上就能用
-
-安装后直接对 Agent 说：
+把下面这段话发给 Agent，只需替换文章目录和昵称：
 
 ```text
-使用 $knowledge-peak-map 分析这个 Markdown 文章集合。
-作者昵称是 Pakco，生成中文文山地图。
+使用 $knowledge-peak-map 分析：
+/absolute/path/to/my-writing
+
+作者昵称：Pakco
+界面语言：中文
+目标：生成文山地图
 ```
 
-或者：
+如果宿主不使用 `$skill-name` 语法，就说“使用 knowledge-peak-map Skill 分析这个目录”。
 
-```text
-分析这个 Obsidian 文件夹里的草稿和成稿。
-先排除第三方资料和模板，归并文章版本，再生成文山。
-```
-
-输入只有三个：
+输入只需要三个信息：
 
 1. 作者昵称；
-2. 用户明确选择的 Markdown / Obsidian 文章集合；
+2. 用户明确选择的 Markdown / Obsidian 文章目录；
 3. 中文或英文界面。
 
-文山不会默认扫描整个 Vault，不会修改源文章，也不要求上传到远程服务。
+文山默认不会扫描整个 Vault，不会修改源文章，也不会把文章上传到远程服务。
 
----
+### 你会得到什么
 
-## 五个能力
-
-| 用户想做什么 | 文山能力 | 主要产物 |
-|---|---|---|
-| 清掉提示词、模板、参考资料和碎片 | 语义审阅 | `cards/*.json` |
-| 草稿、成稿、改写不能重复抬高海拔 | 版本归并 | canonical 分析单位 |
-| 找出长期反复写作的问题空间 | MECE 主山识别 | `wenshan-terrain.json` |
-| 提炼每个方向上逐渐稳定的回答 | 纵向主张综合 | 山峰副标题与时间演化 |
-| 把证据变成可探索、可传播的地图 | 确定性等高线渲染 | 中英 HTML、Markdown、截图 |
-
----
-
-## 它怎么判断一座山
-
-```mermaid
-flowchart TD
-    A["用户选择的 Markdown 语料"] --> B["确定语料边界"]
-    B --> C["排除第三方资料、提示词、模板与碎片"]
-    C --> D["草稿 / 成稿 / 改写版本归并"]
-    D --> E["一篇 canonical 文章 = 一个分析单位"]
-    E --> F["逐篇开放编码：场景、行业、角色、实践、主张与证据"]
-    F --> G["在同一分类轴上形成 MECE 候选主山"]
-    G --> H{"至少 3 篇独立文章？"}
-    H -- "否" --> I["不生成山，不显示待勘探"]
-    H -- "是" --> J["山界审查与副标题覆盖率检查"]
-    J --> K["纵向合并早期、修正与稳定主张"]
-    K --> L["审阅山间关系，不使用 embedding 距离"]
-    L --> M["关系山脊 + 全局高度场 + 确定性等高线"]
+```text
+文章目录/
+└── Cognitive Map/
+    └── Agent Atlas/
+        ├── cards/                 # 每篇文章的可审计语义卡
+        ├── runs/                  # 分析过程与复核记录
+        ├── review.md              # 边界案例与人工决策
+        ├── wenshan-terrain.json   # 山名、篇数、证据与山间关系
+        ├── 文山.md                # 可阅读的分析摘要
+        └── 文山.html              # 可缩放、可点击、可截图的地图
 ```
 
-两个容易被忽略的规则：
+最终 HTML 支持：
 
-- **主山必须 MECE。** 主山共享一个分类轴；媒介、格式、工具或具体方法如果被某个主题完整包含，只能成为子峰。
-- **山数不是目标。** 3 座、7 座或 20 座都可能正确；正确性来自证据门、同层级分类和唯一主归属。
-
-详细方法文章：**[为什么文山不是 Topic Model：判断逻辑、研究来源与应用边界](docs/why-wenshan.md)**。
+- 中英文界面切换，文章标题保留原文；
+- 滚轮与键盘缩放、拖动画布；
+- 点击山峰聚焦并查看倒序文章证据；
+- 日间羊皮纸与夜间图志皮肤；
+- 3:4 传播截图；
+- 从证据点返回 Markdown 或 Obsidian 原文。
 
 ---
 
-## 一座山怎么读
+## 什么时候值得用
+
+- **文章已经很多，但你说不清自己长期在写什么。**
+- **草稿、成稿和改写版本混在一起，普通统计会重复计数。**
+- **你不想让标签、文件夹或向量相似度替你决定知识结构。**
+- **你想把个人写作资产做成一张可解释、可验证、可传播的地图。**
+
+它适用于公众号文章、随笔、研究笔记、项目复盘、决策记录、阅读笔记和作品集。Obsidian 是推荐容器，不是必需条件；一个普通 Markdown 文件夹也能使用。
+
+---
+
+## 文山如何判断一座山
+
+文山使用 **证据门槛式纵向框架分析**（Evidence-Gated Longitudinal Framework Analysis，EGLFA）。这是文山组合现有研究方法形成的工程化规格，不是一个既有论文方法名。
+
+```mermaid
+flowchart LR
+    A["选择作者本人的文章集合"] --> B["排除模板、提示词、第三方资料与碎片"]
+    B --> C["草稿 / 成稿 / 改写版本归并"]
+    C --> D["逐篇编码场景、行业、角色、实践与主张"]
+    D --> E["在同一分类轴上形成 MECE 候选主山"]
+    E --> F{"至少 3 篇独立 canonical 文章？"}
+    F -- "否" --> G["不生成山"]
+    F -- "是" --> H["山界审查、主张综合与关系审阅"]
+    H --> I["确定性等高线地图"]
+```
+
+核心规则：
+
+- 一篇经过版本归并的 canonical 文章，是一个独立分析单位；
+- 同一篇文章只增加一座主山的篇数；
+- 主山必须是与场景、行业、角色或实践强相关的名词短语；
+- 主山必须在一个声明过的分类轴上尽量 MECE；
+- 被主山完整包含的媒介、格式、工具或方法，只能成为子峰；
+- 至少 3 篇独立文章才能形成一座山；没有证据，就没有山；
+- 山间远近来自显式语义审阅，不来自 embedding 距离；
+- 篇数表示写作积累量，不表示知识水平、权威性或正确性。
+
+完整方法文章：
+**[为什么文山不是 Topic Model：判断逻辑、研究来源与应用边界](docs/why-wenshan.md)**。
+
+---
+
+## 一张图应该怎么读
 
 | 地图元素 | 含义 |
 |---|---|
 | 主山名 | 语料中长期重复出现的具体问题空间，例如 `AI工具`、`产品经理`、`CNC` |
+| `16篇` | 16 篇独立 canonical 文章；它是积累量，不是能力评分 |
+| 实心三角 | 主山峰顶与交互入口 |
 | 副标题 | Agent 综合山内文章后，提炼出的作者当前回答 |
-| `16篇` | 16 篇独立 canonical 文章；表示积累量，不表示知识水平 |
-| 子峰 | 被主山包含、但仍值得保留的稳定实践或分支 |
-| 证据点 | 一篇原始文章，可点击回到 Markdown 或 Obsidian |
-| 山间远近 | 经过审阅的语义关系，不是 embedding 相似度 |
-| 山脊与鞍部 | 两座山之间反复出现的共享实践、因果连接或纵向转变 |
+| 外围证据词 | 山内反复出现、并能回溯到文章的场景或实践 |
+| 文章点 | 一篇真实文章；点击后可查看标题、日期、摘要与原文路径 |
+| 山间远近 | 经过审阅的语义关系、共享实践或纵向转变 |
+| 等高线与山脊 | 多座主山组成的一张连续山群，而不是互不相干的圆环 |
 | 右下时间戳 | 本次分析与地图生成时间 |
 
-至少 3 篇独立文章才能形成一座山。没有证据，就没有山。
+---
+
+## 它和常见做法有什么不同
+
+| 做法 | 它通常回答什么 | 文山的处理 |
+|---|---|---|
+| 文件夹 / 标签统计 | 文件被放在哪里 | 不复制目录结构，重新审阅文章语义 |
+| 词频与词云 | 哪些词出现得多 | 品牌名或高频词不会自动成为山 |
+| Topic Model | 文本中可能有哪些统计主题 | 最终主题必须通过人类可理解性与证据门 |
+| Embedding 聚类 | 哪些文本在向量空间接近 | 山间距离使用显式审阅关系，可解释、可修改 |
+| 普通知识图谱 | 实体之间有哪些连接 | 文山还表达文章积累量、主张演化与山界 |
 
 ---
 
@@ -124,136 +191,97 @@ flowchart TD
 - 7 篇保留为低于证据门的 outlier；
 - 最终形成 7 座主山。
 
-其中两次关键修正：
+两次关键修正：
 
 | 错误的平级山 | 修正后 |
 |---|---|
 | `HTML表达 · 5篇` | 并入 `AI工具`，成为子峰 |
 | `AI认知 · 9篇` | 并入 `AI行业`，改为 `人机边界` 子峰 |
 
-这不是为了减少山数，而是因为 `HTML表达` 是 AI 工具进入排版、演示和视觉工作流的具体载体；`AI认知` 则是观察 AI 行业变化时形成的人机边界视角。父子级内容不能并排冒充 MECE。
-
-完整的极简案例：[`case-wenchi-mece.md`](knowledge-peak-map/references/case-wenchi-mece.md)。
-
----
-
-## 视觉皮肤
-
-文山的视觉不能变成普通数据仪表盘。无论皮肤如何变化，都必须保留：
-
-- 等高线；
-- 文章证据点；
-- 主山篇数；
-- 每座山 2～3 个可回溯到文章的外围证据便签；便签不等于子峰，也不增加海拔；
-- 单色或克制色彩；
-- 原文回链；
-- 3:4 传播画幅；
-- 地图整体是一张山脉群，不是若干孤立圆环。
-
-| 皮肤 | 视觉方向 | 状态 |
-|---|---|---|
-| `survey-parchment` | 羊皮纸 × 测绘仪器 × 黑白灰精密线条 | 当前默认 |
-| `obsidian-atlas` | 黑色纸面 × 暖灰金褐等高线 × 星尘证据层；浅色页面承托的夜间阅读皮肤 | 已实现 |
-| `mythic-parchment` | 古代幻想制图 × 手工刻线 × 山脊排线；保留文学感但不复制任何现成作品 | 设计规格 |
-| `archive-engraving` | 十九世纪地理图志 × 铜版雕刻 × 博物馆档案 | 设计规格 |
-
-`obsidian-atlas` 只改变阅读表面，不改变分析结果。切换日间/夜间后，山名、篇数、证据点、山间关系和地形坐标必须完全一致。
-
-下一套可继续探索 `mythic-parchment`。它不是简单把背景染黄，而是改变共享地形线的表现方式：多尺度山脊、带限崎岖、主次等高线和克制坡线，让曲线更像真实山脉，而不是平滑高斯线圈。
-
-详见：[视觉皮肤与“神话羊皮纸”设计规格](docs/visual-themes.md)。
+这里不是为了把山压缩到某个数量，而是避免父主题与子主题并排冒充 MECE。完整案例见
+[`case-wenchi-mece.md`](knowledge-peak-map/references/case-wenchi-mece.md)。
 
 ---
 
 ## 在 Obsidian 里使用
 
-选择一个文章文件夹作为 `scope`。推荐只包含作者自己的草稿和成稿：
+推荐只选择作者自己的草稿与成稿：
 
 ```text
 文章集合/
 ├── 草稿/
-├── 成稿/
-└── Cognitive Map/
-    └── Agent Atlas/
+└── 成稿/
 ```
 
-对支持本地文件能力的 Agent 说：
+对 Agent 说：
 
 ```text
-使用 $knowledge-peak-map 分析：
+使用 $knowledge-peak-map 分析这个 Obsidian 文章集合：
 /absolute/path/to/文章集合
 
 作者：Pakco
 语言：中文
-目标：生成文山地图
+先排除非作者作品并归并版本，再生成文山地图。
 ```
 
-派生文件只会写入：
+派生文件只写入当前文章集合下的 `Cognitive Map/Agent Atlas/`。源 Markdown 和语义卡片不会在渲染阶段被改写。
 
-```text
-Cognitive Map/Agent Atlas/
-├── cards/
-├── runs/
-├── review.md
-├── wenshan-terrain.json
-├── 文山.md
-└── 文山.html
-```
-
-如果已经有经过审阅的卡片与地形数据，也可以直接渲染：
+如果已经有经过审阅的卡片与 `wenshan-terrain.json`，也可以只运行确定性渲染器：
 
 ```bash
 python3 knowledge-peak-map/scripts/render_territory_demo.py \
   --scope "/absolute/path/to/collection" \
   --nickname "Pakco" \
   --language zh \
-  --theme survey-parchment \
+  --theme obsidian-atlas \
   --output-name "文山"
 ```
 
 ---
 
-## 方法定位
+## 视觉皮肤
 
-文山使用 **证据门槛式纵向框架分析**：
+皮肤只改变纸张、线条、字体、网格、选中状态和控制组件；不能改变山名、篇数、证据点、山间关系或地形坐标。
 
-> Evidence-Gated Longitudinal Framework Analysis，EGLFA
+| 皮肤 | 视觉方向 | 状态 |
+|---|---|---|
+| `survey-parchment` | 羊皮纸 × 测绘仪器 × 黑白灰精密线条 | 已实现 |
+| `obsidian-atlas` | 黑色纸面 × 暖灰金褐等高线 × 星尘证据层 | 已实现 |
+| `mythic-parchment` | 古代幻想制图 × 手工刻线 × 克制坡线 | 设计规格 |
+| `archive-engraving` | 十九世纪地理图志 × 铜版雕刻 × 博物馆档案 | 设计规格 |
 
-这是文山组合现有研究方法形成的工程化方法规格，不是已经存在的论文方法名。它吸收：
-
-- Framework Method；
-- 定性内容分析；
-- 扎根理论的开放编码与主轴编码；
-- 纵向定性分析；
-- Argument Mining；
-- 人类可理解性验证。
-
-它不是 topic modeling，也不是 embedding 聚类。统计模型可以帮助搜索，但不能替代“这个主题是否对作者本人有意义”的人类可理解性验收。
-
-阅读完整说明：[docs/why-wenshan.md](docs/why-wenshan.md)。
+详见：[视觉皮肤设计规格](docs/visual-themes.md)。
 
 ---
 
-## 可信边界
+## 安全与可信边界
 
-- 只读取用户明确选择的文章集合。
-- 只有 `include: true` 且 `canonical: true` 的唯一原文路径才能增加海拔。
-- 同一篇文章只增加一座主山的高度。
-- 主山必须在同一分类轴上通过 MECE 审查。
-- 被父主题完整包含的媒介、格式、方法或视角只能作为子峰。
-- 山间距离来自显式审阅关系，不来自 embedding。
-- 篇数代表积累量，不代表知识水平、权威性或正确性。
-- 文章标题保留原文，不因为界面切换中英文而自动翻译。
-- 没有可靠日期时，不把结果包装成纵向分析。
+- 只读取用户明确选择的文章集合；
+- 不默认扫描整个 Vault；
+- 不修改源文章；
+- 不需要向量数据库，不调用 embedding 服务；
+- 不把私人文章或绝对路径写入公共仓库；
+- 只有 `include: true` 且 `canonical: true` 的唯一原文路径才能增加篇数；
+- 没有可靠日期时，不把结果包装成纵向分析；
+- 边界不清的文章与山界进入 `review.md`，而不是静默猜测。
 
 ---
 
-## 仓库结构
+## 开发与验证
+
+```bash
+git clone https://github.com/pakco77/wenshan-skill.git
+cd wenshan-skill
+python3 knowledge-peak-map/scripts/self_check.py
+```
+
+仓库结构：
 
 ```text
 wenshan-skill/
 ├── README.md
 ├── LICENSE
+├── assets/
 ├── docs/
 │   ├── why-wenshan.md
 │   └── visual-themes.md
@@ -262,14 +290,10 @@ wenshan-skill/
     ├── agents/
     ├── assets/
     ├── references/
-    │   ├── methodology.zh.md
-    │   ├── methodology.en.md
-    │   ├── data-contract.md
-    │   └── case-wenchi-mece.md
     └── scripts/
-        ├── render_territory_demo.py
-        └── self_check.py
 ```
+
+Renderer 与自检仅使用 Python 标准库。欢迎提交新的语料案例、宿主适配、验证规则或视觉皮肤，但请确保同一份语义数据在不同皮肤下保持完全一致。
 
 ---
 
@@ -277,4 +301,4 @@ wenshan-skill/
 
 [MIT](LICENSE) © 2026 Pakco
 
-如果文山帮助你重新看见自己的写作资产，欢迎 Star；如果你设计了新的地形皮肤、分析案例或宿主适配，欢迎提交 PR。
+如果文山让你重新看见了自己的写作资产，欢迎 Star；如果你发现了错误山界或新的使用场景，欢迎提交 Issue 或 PR。
