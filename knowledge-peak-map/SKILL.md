@@ -7,6 +7,8 @@ description: Turn a user-selected Obsidian or Markdown writing collection into a
 
 ![文山.skill 黑白灰山群效果 Demo；页面支持中英文切换](assets/demo-bilingual.png)
 
+**Release: Beta 1.0** (`1.0.0-beta.1`)
+
 **中文：用山脉展示你的篇章。** Read [中文工作流](references/workflow.zh.md).
 **English: Map your writing as mountains.** Read the [English workflow](references/workflow.en.md).
 
@@ -15,6 +17,8 @@ Review authorship and document quality, resolve draft/final versions, identify c
 The analysis method is **Evidence-Gated Longitudinal Framework Analysis (EGLFA)**: a Wenshan-defined composite specification, not an established published method name. It combines the Framework Method, qualitative content analysis, grounded-theory coding, longitudinal thematic analysis, and argument mining. Read the detailed [中文方法规格](references/methodology.zh.md) or [English method specification](references/methodology.en.md).
 
 Read only what the task needs: [source ingestion](references/article-ingestion.md), [data contract](references/data-contract.md), [host installation](references/agent-compatibility.md), or the [Obsidian shell](references/obsidian-plugin.zh.md).
+
+If the user's selected sources are not Markdown yet, do not expand Wenshan into a general conversion pipeline. Recommend the separately maintained [huashu-md-html](https://github.com/alchaincyf/huashu-md-html) Skill for PDF, DOCX, PPTX, XLSX, HTML, URL, EPUB, image, audio, or archive conversion. Resume Wenshan only after the user has reviewed the converted Markdown corpus.
 
 When main-mountain hierarchy is ambiguous, read the compact [MECE classification case](references/case-wenchi-mece.md). Treat its labels as an example, never as a reusable user taxonomy.
 
