@@ -7,7 +7,12 @@ import json
 import tempfile
 from pathlib import Path
 
-from render_territory_demo import build_payload, validate_method_contract, validate_peak_labels
+from render_territory_demo import (
+    build_payload,
+    validate_evidence_labels,
+    validate_method_contract,
+    validate_peak_labels,
+)
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -66,6 +71,33 @@ def main() -> None:
         assert night_payload["profile"]["theme"] == "obsidian-atlas"
         assert night_payload["territories"] == payload["territories"]
         assert night_payload["relations"] == payload["relations"]
+        evidence_labels = {
+            "territories": [{
+                **territories[0],
+                "evidence_labels": [
+                    {
+                        "label": "企业数字化",
+                        "label_en": "Enterprise Digitization",
+                        "article_ids": [territories[0]["cards"][0]["id"], territories[0]["cards"][1]["id"]],
+                        "rationale": "两篇文章共同讨论企业数字化。",
+                    },
+                    {
+                        "label": "业务场景",
+                        "label_en": "Business Scenarios",
+                        "article_ids": [territories[0]["cards"][1]["id"], territories[0]["cards"][2]["id"]],
+                        "rationale": "两篇文章共同讨论具体业务场景。",
+                    },
+                ],
+            }],
+        }
+        validate_evidence_labels(evidence_labels)
+        evidence_labels["territories"][0]["evidence_labels"][0]["article_ids"] = ["outside-card", "another-card"]
+        try:
+            validate_evidence_labels(evidence_labels)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("An evidence label referencing cards outside its mountain passed validation")
         (vault / ".obsidian").rmdir()
         markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert markdown_payload["territories"][0]["points"][0]["url"].startswith("file://")
@@ -169,7 +201,7 @@ def main() -> None:
         else:
             raise AssertionError("Embedding-derived distance passed the v6 range contract")
 
-        print("PASS EGLFA v6 range contract, unlimited evidence mountains, reviewed relations, no embedding distance, cross-theme semantic parity, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
+        print("PASS EGLFA v6 range contract, auditable evidence labels, unlimited evidence mountains, reviewed relations, no embedding distance, cross-theme semantic parity, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":

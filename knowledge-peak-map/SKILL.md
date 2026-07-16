@@ -23,6 +23,7 @@ Render reviewed judgments; never infer document proximity with embeddings.
 - Let the local Agent identify a concrete scene, practice, role, industry, or knowledge-domain keyword from the selected corpus. Never ask the user to predefine mountains.
 - Preserve every distinct candidate mountain that passes the evidence gate. Do not cap the visible mountain count or force related domains into a single parent category.
 - Make main mountains MECE on one declared classification axis. A medium, tool, format, technique, or other contained practice belongs under its parent mountain as an auditable subpeak; for example, `HTML表达` belongs under `AI工具` when the corpus treats HTML as an AI-assisted production medium.
+- Keep peripheral evidence labels separate from subpeaks. Extract two or three recurring scene, practice, role, problem, or knowledge-domain noun phrases per mountain; cite at least two supporting cards for each label. Evidence labels decorate and explain the terrain but never add altitude or alter classification.
 - Review mountain-to-mountain relationships explicitly. Use a deterministic relation graph to express semantic proximity, shared practice, causal connection, or longitudinal transition; never derive distance from embeddings.
 - Use the Agent's evidence-backed answer as the subtitle.
 - Count only unique source paths whose cards are both `include: true` and `canonical: true`; three paths make one mountain. Below that: render nothing.

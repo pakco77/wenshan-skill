@@ -95,6 +95,20 @@ Store the reviewed scene or industry clusters at `wenshan-terrain.json`:
       "subpeaks": [
         {"label": "HTML表达", "label_en": "HTML Expression", "count": 5}
       ],
+      "evidence_labels": [
+        {
+          "label": "Agent工作流",
+          "label_en": "Agent Workflows",
+          "article_ids": ["card-id", "another-card-id"],
+          "rationale": "多篇文章反复讨论 Agent 如何进入真实工作流。"
+        },
+        {
+          "label": "模型评测",
+          "label_en": "Model Evaluation",
+          "article_ids": ["third-card-id", "fourth-card-id"],
+          "rationale": "多篇文章以横向测试或能力边界比较模型。"
+        }
+      ],
       "status": "evidenced",
       "boundary_review": {
         "absorbs_over_half": false,
@@ -125,6 +139,8 @@ Store the reviewed scene or industry clusters at `wenshan-terrain.json`:
 
 `id` is internal and stable. It must not be treated as user-facing copy. `label` is the mountain's main title and must be a concrete scene or industry keyword identified by the Agent. `answer` is the Agent's evidence-backed subtitle judgment.
 
+`evidence_labels` are two or three compact peripheral map annotations extracted from recurring article evidence inside one mountain. Each item must cite at least two card IDs from that same mountain and include a rationale. They do not add altitude, do not change article assignment, and do not become classification nodes. `subpeaks` remain stronger structural subdivisions that pass the mountain evidence gate; never manufacture subpeaks merely to decorate the map.
+
 `label_kind` must be one of `scene`, `industry`, `role`, `practice`, or `knowledge_domain`. `label_rationale` records why the source articles justify that concrete label. These audit fields are required in schema version 3 but are not rendered on the public map.
 
 Schema version 4 applies the Wenshan-defined **Evidence-Gated Longitudinal Framework Analysis (EGLFA)** contract. It adds a bounded corpus record, open-coding fields, mountain-boundary review, longitudinal claim synthesis, stability results, and an auditable generation timestamp. Older versions remain readable for compatibility; new semantic outputs should use version 6.
@@ -142,6 +158,7 @@ Schema version 6 replaces the fixed main-mountain count with a MECE mountain-ran
 - Schema version 4 records `analysis_method: EGLFA`, `generated_at`, corpus boundaries, boundary review, claim history, and stability review.
 - Schema version 6 additionally requires a passed `range_review`, one declared classification axis, MECE main mountains, contained practices represented as subpeaks, auditable relation rationales, no embedding-derived distance, exclusive primary assignment, and coverage of all displayed units. It imposes no fixed visible mountain limit.
 - A canonical article belongs to one primary mountain.
+- When `evidence_labels` are present, each mountain has two or three unique labels, each supported by at least two cited cards from that mountain and an explicit rationale.
 - `crosses` may reference up to two other mountain IDs but never add altitude there.
 - Article count represents accumulated writing volume, not knowledge level, authority, or correctness.
 - Article titles remain in the source language.

@@ -157,6 +157,30 @@ def validate_method_contract(data: dict) -> None:
                 raise SystemExit(f"Mountain relation {source!r} -> {target!r} needs strength 0..1 and a reason.")
 
 
+def validate_evidence_labels(data: dict) -> None:
+    """Keep visual evidence labels auditable without promoting them to subpeaks."""
+    for territory in data.get("territories", []):
+        labels = territory.get("evidence_labels")
+        if labels is None:
+            continue
+        if not isinstance(labels, list) or not 2 <= len(labels) <= 3:
+            raise SystemExit(f"{territory.get('id', '<unknown>')}: evidence_labels must contain two or three items.")
+        card_ids = {card.get("id") for card in territory.get("cards", [])}
+        seen = set()
+        for item in labels:
+            label = first_text(item, "label")
+            article_ids = item.get("article_ids", [])
+            if not label or label in seen:
+                raise SystemExit(f"{territory.get('id', '<unknown>')}: evidence labels must be unique non-empty noun phrases.")
+            if not isinstance(article_ids, list) or len(set(article_ids)) < 2:
+                raise SystemExit(f"{territory.get('id', '<unknown>')}: {label} needs at least two supporting articles.")
+            if not set(article_ids).issubset(card_ids):
+                raise SystemExit(f"{territory.get('id', '<unknown>')}: {label} references a card outside its mountain.")
+            if not first_text(item, "rationale"):
+                raise SystemExit(f"{territory.get('id', '<unknown>')}: {label} needs an evidence rationale.")
+            seen.add(label)
+
+
 def vault_for(scope: Path) -> Path | None:
     for candidate in (scope, *scope.parents):
         if (candidate / ".obsidian").is_dir():
@@ -306,6 +330,7 @@ def build_payload(
 ) -> dict:
     validate_peak_labels(data)
     validate_method_contract(data)
+    validate_evidence_labels(data)
     vault = vault_for(scope)
     candidates = [
         territory for territory in data.get("territories", [])
@@ -347,6 +372,7 @@ def build_payload(
             "answer_en": first_text(territory, "answer_en", "explanation_en", "llm_answer_en", "answer", "explanation", "llm_answer"),
             "count": len(points),
             "subpeaks": territory.get("subpeaks", []),
+            "evidence_labels": territory.get("evidence_labels", []),
             "x": ax,
             "y": ay,
             "points": points,
@@ -421,7 +447,8 @@ function paintDust(){if(theme!=='obsidian-atlas')return;const p=palette();ctx.sa
 function paintRange(){const field=terrainCache||(terrainCache=terrainField()),rings=theme==='obsidian-atlas'?24:16,p=palette();ctx.save();ctx.strokeStyle=p.line;ctx.lineCap='round';ctx.lineJoin='round';for(let ring=1;ring<=rings;ring++){const t=ring/rings,level=field.max*((theme==='obsidian-atlas'?.022:.036)+Math.pow(t,1.48)*(theme==='obsidian-atlas'?.87:.83)),major=ring===1||ring===rings||ring%4===0,chains=connectSegments(levelSegments(field,level));ctx.globalAlpha=theme==='obsidian-atlas'?(major?.44+.20*t:.17+.22*t):(major?.58:.27);ctx.lineWidth=(theme==='obsidian-atlas'?(major?1.18+.80*t:.58+.46*t):(major?1.75:.78))/view.scale;chains.forEach((chain,index)=>{if(theme==='obsidian-atlas'){const fault=seeded(`fault-${ring}-${index}`,ring*47+index);if(fault>.66)ctx.setLineDash([72/view.scale,8/view.scale,28/view.scale,6/view.scale]);else if(fault>.48)ctx.setLineDash([132/view.scale,9/view.scale]);else ctx.setLineDash([]);ctx.lineDashOffset=-seeded(`offset-${ring}-${index}`,index*19)*150/view.scale}strokeSmooth(chain,field.nx,field.ny)});ctx.setLineDash([])}ctx.restore()}
 function wrap(text,x,y,width,line){let row='';for(const ch of [...text]){const next=row+ch;if(ctx.measureText(next).width>width&&row){ctx.fillText(row,x,y);y+=line;row=ch}else row=next}if(row)ctx.fillText(row,x,y)}
 function titleFont(text,maxWidth){let size=29;while(size>16){ctx.font=`650 ${size}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;if(ctx.measureText(text).width<=maxWidth)break;size-=1}return size}
-function peripheralLabels(h,x,y,selected){if(theme!=='obsidian-atlas')return;const terms=(h.subpeaks||[]).slice(0,3),p=palette(),offsets=[[-120,-76],[120,-48],[-105,118]];ctx.save();ctx.textAlign='center';ctx.fillStyle=p.title;ctx.strokeStyle=p.line;ctx.globalAlpha=selected ? .80 : .58;ctx.font='560 17px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';terms.forEach((term,index)=>{const text=language==='en'?(term.label_en||term.label):term.label,[dx,dy]=offsets[index];if(!text)return;ctx.fillText(text,x+dx,y+dy);const width=Math.min(96,Math.max(34,ctx.measureText(text).width*.76));ctx.lineWidth=.9/view.scale;ctx.beginPath();ctx.moveTo(x+dx-width/2,y+dy+11);ctx.lineTo(x+dx+width/2,y+dy+11);ctx.stroke()});ctx.restore()}
+function evidenceOffsets(h){if(h.x<.22)return[[122,-76],[136,-14],[110,82]];if(h.x>.78)return[[-122,-76],[-136,-14],[-110,82]];if(h.y>.78)return[[-118,-76],[118,-48],[-104,-122]];return[[-120,-76],[120,-48],[-105,118]]}
+function peripheralLabels(h,x,y,selected){if(theme!=='obsidian-atlas')return;const terms=(h.evidence_labels||[]).slice(0,3),p=palette(),offsets=evidenceOffsets(h);ctx.save();ctx.textAlign='center';ctx.fillStyle=p.title;ctx.strokeStyle=p.line;ctx.globalAlpha=selected ? .80 : .58;ctx.font='560 17px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';terms.forEach((term,index)=>{const text=language==='en'?(term.label_en||term.label):term.label,[dx,dy]=offsets[index];if(!text)return;ctx.fillText(text,x+dx,y+dy);const width=Math.min(96,Math.max(34,ctx.measureText(text).width*.76));ctx.lineWidth=.9/view.scale;ctx.beginPath();ctx.moveTo(x+dx-width/2,y+dy+11);ctx.lineTo(x+dx+width/2,y+dy+11);ctx.stroke()});ctx.restore()}
 function label(h){const x=h.x*W,y=h.y*H,p=palette(),words=q(),text=copy(h),selected=active?.id===h.id,dense=hills.length>=7,titleWidth=dense?232:340;ctx.save();ctx.textAlign='center';ctx.globalAlpha=active&&!selected ? .55 : 1;ctx.fillStyle=p.count;ctx.font=`810 ${selected?31:dense?27:29}px ui-monospace,SFMono-Regular,Menlo,monospace`;ctx.strokeStyle=p.bg;ctx.lineWidth=4.2/view.scale;ctx.strokeText(words.pieces(h.count),x,y-52);ctx.fillText(words.pieces(h.count),x,y-52);ctx.fillStyle=p.dot;ctx.beginPath();ctx.moveTo(x,y-38);ctx.lineTo(x-22,y+14);ctx.lineTo(x+22,y+14);ctx.closePath();ctx.fill();ctx.strokeStyle=p.title;ctx.globalAlpha=active&&!selected ? .28 : .62;ctx.lineWidth=1/view.scale;ctx.beginPath();ctx.moveTo(x-19,y+15);ctx.lineTo(x+19,y+15);ctx.stroke();ctx.globalAlpha=active&&!selected ? .55 : 1;const size=titleFont(text.label,titleWidth),titleSize=selected?Math.min(size+5,34):dense?Math.min(size+2,29):size;ctx.fillStyle=p.title;ctx.font=`700 ${titleSize}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;ctx.strokeStyle=p.bg;ctx.lineWidth=(theme==='obsidian-atlas'?4.4:5)/view.scale;ctx.strokeText(text.label,x,y+59);ctx.fillText(text.label,x,y+59);peripheralLabels(h,x,y,selected);if(!dense&&theme!=='obsidian-atlas'){ctx.fillStyle=p.muted;ctx.font='12px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';wrap(text.answer,x,y+89,310,19)}ctx.restore()}
 function focusRing(hill){const x=hill.x*W,y=hill.y*H,r=Math.max(112,...hill.points.map(p=>Math.hypot(p.x*W-x,p.y*H-y)+32)),p=palette();ctx.save();ctx.strokeStyle=p.focus;ctx.globalAlpha=theme==='obsidian-atlas'?.70:.78;ctx.lineWidth=(theme==='obsidian-atlas'?1.25:1.7)/view.scale;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();ctx.restore()}
 function draw(){const p=palette();ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle=p.bg;ctx.fillRect(0,0,W,H);paintGrid();paintNoise();ctx.save();ctx.translate(view.x,view.y);ctx.scale(view.scale,view.scale);paintDust();paintRange();for(const hill of hills){ctx.save();for(const point of hill.points){ctx.beginPath();ctx.arc(point.x*W,point.y*H,(theme==='obsidian-atlas'?2.55:3.1)/view.scale,0,Math.PI*2);ctx.fillStyle=p.dot;ctx.globalAlpha=active&&active.id!==hill.id?(theme==='obsidian-atlas'?.22:.38):(theme==='obsidian-atlas'?.58:.76);ctx.fill();ctx.strokeStyle=p.dotStroke;ctx.globalAlpha=active&&active.id!==hill.id?(theme==='obsidian-atlas'?.22:.48):(theme==='obsidian-atlas'?.68:.92);ctx.lineWidth=(theme==='obsidian-atlas'?.72:1.15)/view.scale;ctx.stroke()}ctx.restore()}if(active)focusRing(active);for(const hill of hills.filter(h=>h.id!==active?.id))label(hill);if(active)label(active);ctx.restore()}
