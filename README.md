@@ -152,10 +152,13 @@ flowchart TD
 | 皮肤 | 视觉方向 | 状态 |
 |---|---|---|
 | `survey-parchment` | 羊皮纸 × 测绘仪器 × 黑白灰精密线条 | 当前默认 |
+| `obsidian-atlas` | 黑色纸面 × 暖灰金褐等高线 × 星尘证据层；浅色页面承托的夜间阅读皮肤 | 已实现 |
 | `mythic-parchment` | 古代幻想制图 × 手工刻线 × 山脊排线；保留文学感但不复制任何现成作品 | 设计规格 |
 | `archive-engraving` | 十九世纪地理图志 × 铜版雕刻 × 博物馆档案 | 设计规格 |
 
-下一套推荐实现 `mythic-parchment`。它不是简单把背景染黄，而是改变地形线的生成方式：多尺度山脊、带限崎岖、主次等高线和克制坡线，让曲线更像真实山脉，而不是平滑高斯线圈。
+`obsidian-atlas` 只改变阅读表面，不改变分析结果。切换日间/夜间后，山名、篇数、证据点、山间关系和地形坐标必须完全一致。
+
+下一套可继续探索 `mythic-parchment`。它不是简单把背景染黄，而是改变共享地形线的表现方式：多尺度山脊、带限崎岖、主次等高线和克制坡线，让曲线更像真实山脉，而不是平滑高斯线圈。
 
 详见：[视觉皮肤与“神话羊皮纸”设计规格](docs/visual-themes.md)。
 
@@ -203,6 +206,7 @@ python3 knowledge-peak-map/scripts/render_territory_demo.py \
   --scope "/absolute/path/to/collection" \
   --nickname "Pakco" \
   --language zh \
+  --theme survey-parchment \
   --output-name "文山"
 ```
 

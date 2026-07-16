@@ -72,7 +72,19 @@ python3 scripts/render_territory_demo.py \
   --scope "/absolute/content-scope" \
   --nickname "作者昵称" \
   --language zh \
+  --theme survey-parchment \
   --output-name "文山"
+```
+
+Night reading skin:
+
+```bash
+python3 scripts/render_territory_demo.py \
+  --scope "/absolute/content-scope" \
+  --nickname "作者昵称" \
+  --language zh \
+  --theme obsidian-atlas \
+  --output-name "文山-黑曜石图志"
 ```
 
 English:
@@ -82,8 +94,11 @@ python3 scripts/render_territory_demo.py \
   --scope "/absolute/content-scope" \
   --nickname "Author" \
   --language en \
+  --theme survey-parchment \
   --output-name "Wenshan"
 ```
+
+`survey-parchment` and `obsidian-atlas` are visual skins over the same semantic payload. A skin may change paper, contour color, typography, grid, selection treatment, and controls. It must not change mountain labels, article counts, evidence points, reviewed relations, or terrain coordinates.
 
 Write derived HTML and Markdown only inside `Cognitive Map/Agent Atlas/`. Never edit source notes or semantic cards during rendering.
 
@@ -95,7 +110,7 @@ Run:
 python3 scripts/self_check.py
 ```
 
-Then verify counts, Chinese/English data parity, generated JavaScript, the bottom-center timestamp, desktop fit, and the 1080×1440 export.
+Then verify counts, Chinese/English data parity, cross-theme semantic parity, generated JavaScript, the bottom-right timestamp, desktop fit, and the 1080×1440 export.
 
 ## Reuse boundary
 

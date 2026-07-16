@@ -55,6 +55,17 @@ def main() -> None:
         assert payload["territories"][0]["answer"] == "Agent 对该行业文章的回答"
         assert payload["generated_at"]
         assert len({(item["x"], item["y"]) for item in payload["territories"]}) == 3
+        night_payload = build_payload(
+            scope,
+            {"version": 3, "territories": territories},
+            "",
+            str(scope),
+            "en",
+            "obsidian-atlas",
+        )
+        assert night_payload["profile"]["theme"] == "obsidian-atlas"
+        assert night_payload["territories"] == payload["territories"]
+        assert night_payload["relations"] == payload["relations"]
         (vault / ".obsidian").rmdir()
         markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
         assert markdown_payload["territories"][0]["points"][0]["url"].startswith("file://")
@@ -158,7 +169,7 @@ def main() -> None:
         else:
             raise AssertionError("Embedding-derived distance passed the v6 range contract")
 
-        print("PASS EGLFA v6 range contract, unlimited evidence mountains, reviewed relations, no embedding distance, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
+        print("PASS EGLFA v6 range contract, unlimited evidence mountains, reviewed relations, no embedding distance, cross-theme semantic parity, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":
