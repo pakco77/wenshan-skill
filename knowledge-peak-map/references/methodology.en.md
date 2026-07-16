@@ -52,7 +52,18 @@ Extract at least:
 
 ### 4. Axially code candidate peaks
 
-Merge repeated concrete domains. A peak label must be a noun or noun phrase anchored to a scene, industry, role, practice, or knowledge domain. Reject full conclusions, quotes, slogans, unreviewed folder names, and incidental vendor repetition.
+First form any number of evidence-backed candidate subpeaks. A candidate label must be a noun or noun phrase anchored to a scene, industry, role, practice, or knowledge domain. Reject full conclusions, quotes, slogans, unreviewed folder names, and incidental vendor repetition.
+
+Then audit the **mountain-range relations**:
+
+1. Declare one main-mountain classification axis, such as `primary_problem_space`.
+2. Require MECE main mountains on that axis. Merge true synonyms and duplicate labels, but keep distinct related domains as separate mountains.
+3. If a candidate is a medium, format, tool, method, or analytical perspective contained by another candidate, retain it as an auditable subpeak rather than a peer mountain.
+4. Keep one altitude-bearing primary mountain per article; cross-mountain relations never duplicate counts.
+5. Record strength and rationale for important mountain pairs, such as shared scene, practice, causal connection, or longitudinal transition.
+6. Relation strength controls proximity and ridge connection, not article membership.
+7. Do not impose a fixed visible mountain limit. Every interpretable, evidence-gated, MECE main mountain may enter the same range.
+8. Handle large ranges through scale, label collision, and progressive detail rather than deleting themes.
 
 ### 5. Apply the evidence gate
 
@@ -60,15 +71,18 @@ A visible peak requires at least three independent canonical articles, an explai
 
 ### 6. Audit mountain boundaries
 
-Answer five fixed questions:
+Answer six fixed questions:
 
 1. Does the peak absorb more than half of all eligible articles?
 2. Does it contain at least three stable subthemes?
 3. Can any sample of five articles be explained as belonging to it?
 4. Does the subtitle cover at least 70% of its articles?
 5. Would a split produce subpeaks with at least three articles each?
+6. Is the candidate only a medium, format, method, tool, or analytical perspective contained by another mountain?
 
-If the first two answers are yes and any of the final three is no, require human review. Persist the review in terrain data rather than leaving it only in the Agent conversation.
+If the first two answers are yes and any of questions three through five is no, or question six is yes, require human review. Persist the review in terrain data rather than leaving it only in the Agent conversation.
+
+Also audit the complete range: every important spatial relation needs an evidence-backed rationale, and unrelated mountains must not be pulled together merely for layout convenience.
 
 ### 7. Synthesize the current answer
 
@@ -96,7 +110,10 @@ If the thresholds fail, label the result as pending review rather than a stable 
 
 - Article count represents accumulated writing volume, not knowledge level or correctness.
 - The peak label represents a recurring concrete domain.
+- The public map is one range containing every evidence-gated mountain.
+- Mountain distance represents reviewed relation strength, never embedding distance.
+- Local density represents the concentration of related mountains and evidence.
 - The subtitle represents the author's current stable answer in that domain.
 - Time strata represent early, revised, and stable claims.
 - Evidence points are independent canonical articles with source traceability.
-- Contours are deterministic visual expressions of evidence, not embedding distance.
+- Contours are generated from the combined altitude fields of all mountains. Related nearby peaks share ridges and saddles while distant peaks remain sparse. High-resolution smoothing keeps the global linework fluid. Evidence-point jitter never represents embedding distance.

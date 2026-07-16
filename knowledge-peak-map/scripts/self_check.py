@@ -95,7 +95,70 @@ def main() -> None:
         else:
             raise AssertionError("EGLFA subtitle coverage below 70% passed validation")
 
-        print("PASS EGLFA contract, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
+        reviewed_peak = {
+            "id": "reviewed-peak",
+            "status": "evidenced",
+            "boundary_review": {"status": "passed", "answer_coverage": 0.75},
+        }
+        taxonomy = {
+            "axis": "long_term_domain",
+            "main_mountain_count": 5,
+            "count_limit": 5,
+            "same_level": True,
+            "no_parent_child_pairs": True,
+            "primary_assignment_exclusive": True,
+            "displayed_units_covered": True,
+            "status": "passed",
+        }
+        eglfa_v5 = {
+            **eglfa,
+            "version": 5,
+            "taxonomy_review": taxonomy,
+            "territories": [{**reviewed_peak, "id": f"peak-{index}"} for index in range(5)],
+        }
+        validate_method_contract(eglfa_v5)
+        eglfa_v5["territories"].append({**reviewed_peak, "id": "peak-6"})
+        eglfa_v5["taxonomy_review"]["main_mountain_count"] = 6
+        try:
+            validate_method_contract(eglfa_v5)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("More than five public main mountains passed validation")
+
+        range_review = {
+            "layout_method": "reviewed_relation_graph",
+            "classification_axis": "primary_problem_space",
+            "primary_assignment_exclusive": True,
+            "displayed_units_covered": True,
+            "relations_auditable": True,
+            "main_mountains_mece": True,
+            "contained_practices_as_subpeaks": True,
+            "embedding_distance_used": False,
+            "status": "passed",
+        }
+        eglfa_v6 = {
+            **eglfa,
+            "version": 6,
+            "range_review": range_review,
+            "relations": [{
+                "source": "peak-0",
+                "target": "peak-1",
+                "strength": 0.8,
+                "reason": "Shared reviewed practice",
+            }],
+            "territories": [{**reviewed_peak, "id": f"peak-{index}"} for index in range(8)],
+        }
+        validate_method_contract(eglfa_v6)
+        eglfa_v6["range_review"]["embedding_distance_used"] = True
+        try:
+            validate_method_contract(eglfa_v6)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("Embedding-derived distance passed the v6 range contract")
+
+        print("PASS EGLFA v6 range contract, unlimited evidence mountains, reviewed relations, no embedding distance, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":

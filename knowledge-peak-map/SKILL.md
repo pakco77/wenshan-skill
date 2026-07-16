@@ -5,7 +5,7 @@ description: Apply Evidence-Gated Longitudinal Framework Analysis (EGLFA) to rev
 
 # 文山.skill / Wenshan.skill
 
-![文山.skill / Wenshan.skill 双语效果 Demo](assets/demo-bilingual.png)
+![文山.skill 黑白灰山群效果 Demo；页面支持中英文切换](assets/demo-bilingual.png)
 
 **中文：用山脉展示你的篇章。** Read [中文工作流](references/workflow.zh.md).
 **English: Map your writing as mountains.** Read the [English workflow](references/workflow.en.md).
@@ -14,11 +14,16 @@ Analyze personal writing with **Evidence-Gated Longitudinal Framework Analysis (
 
 Read only what the task needs: [source ingestion](references/article-ingestion.md), [data contract](references/data-contract.md), [host installation](references/agent-compatibility.md), or the [Obsidian shell](references/obsidian-plugin.zh.md).
 
+When main-mountain hierarchy is ambiguous, read the compact [MECE classification case](references/case-wenchi-mece.md). Treat its labels as an example, never as a reusable user taxonomy.
+
 ## Contract
 
 Render reviewed judgments; never infer document proximity with embeddings.
 
 - Let the local Agent identify a concrete scene, practice, role, industry, or knowledge-domain keyword from the selected corpus. Never ask the user to predefine mountains.
+- Preserve every distinct candidate mountain that passes the evidence gate. Do not cap the visible mountain count or force related domains into a single parent category.
+- Make main mountains MECE on one declared classification axis. A medium, tool, format, technique, or other contained practice belongs under its parent mountain as an auditable subpeak; for example, `HTML表达` belongs under `AI工具` when the corpus treats HTML as an AI-assisted production medium.
+- Review mountain-to-mountain relationships explicitly. Use a deterministic relation graph to express semantic proximity, shared practice, causal connection, or longitudinal transition; never derive distance from embeddings.
 - Use the Agent's evidence-backed answer as the subtitle.
 - Count only unique source paths whose cards are both `include: true` and `canonical: true`; three paths make one mountain. Below that: render nothing.
 - Use article count as accumulated writing volume, not knowledge level. Keep evidence titles in their source language.
@@ -48,7 +53,7 @@ Use the user's local Agent to:
 1. **Bound the corpus.** Record author, selected files, time range, document kinds, and authorship. Exclude third-party references, prompts, manuals, templates, empty files, unfinished fragments, and non-author work.
 2. **Fix the analysis unit.** Treat one version-resolved canonical article as one independent unit. Drafts and rewrites never add duplicate altitude.
 3. **Open-code every article.** Extract scenes, industries, roles, practices, knowledge domains, claim, premises, evidence, date, and confidence.
-4. **Axially code candidate peaks.** Merge repeated concrete domains. Reject slogans, full conclusions, quotes, abstract laws, aspirations, unreviewed folder names, and incidental vendor names.
+4. **Axially code candidate mountains.** Merge true synonyms and duplicate labels, but keep distinct related domains as separate mountains. Record reviewed relations between mountains so proximity and density can express how the author's concerns connect.
 5. **Apply the evidence gate.** Require three unique canonical paths; explain every assignment; require one primary mountain per article; render no unsupported placeholder.
 6. **Audit mountain boundaries.** Test corpus share, stable subthemes, five-article explainability, subtitle coverage of at least 70%, and whether a split would yield valid three-article subpeaks. Send triggered cases to human review.
 7. **Synthesize the answer longitudinally.** Merge claims, find conflicts, order them by time, distinguish early, revised, and stable claims, then write the current answer.
@@ -56,7 +61,7 @@ Use the user's local Agent to:
 
 Do not call an analysis longitudinal when reliable document dates or a meaningful time range are unavailable. Repair the dates or describe the result as an evidence-gated framework map without temporal claims.
 
-The renderer is deterministic after semantic preparation. Fix a wrong mountain by revising the evidence or label extraction, never by tuning coordinates.
+The renderer is deterministic after semantic preparation. Render all evidenced mountains as one restrained monochrome range with no blurred terrain shadow. Place mountains from the reviewed relation graph, then combine their altitude fields and relation-derived ridges into one continuous terrain so every peak belongs to one mountain group. Smooth the global contours at high resolution. Support wheel/keyboard zoom, pointer panning, peak focus, and an article drawer. Fix a wrong mountain or distance by revising evidence or reviewed relations, never by tuning arbitrary coordinates.
 
 ## Render
 
