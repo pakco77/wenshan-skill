@@ -1,6 +1,6 @@
 ---
 name: knowledge-peak-map
-description: Create bilingual evidence-gated Wenshan contour maps that identify concrete scene or industry peaks from reviewed Obsidian or Markdown article collections. Use when the user asks for 文山.skill, Wenshan.skill, knowledge mountains, knowledge peaks, article terrain, contour visualization, or a personal knowledge map built from canonical evidence without embedding-based similarity.
+description: Apply Evidence-Gated Longitudinal Framework Analysis (EGLFA) to reviewed Obsidian or Markdown writing, then create bilingual Wenshan contour maps whose concrete scene or industry peaks are supported by canonical evidence. Use when the user asks for 文山.skill, Wenshan.skill, longitudinal thematic analysis, knowledge mountains, knowledge peaks, article terrain, contour visualization, or a personal knowledge map built without embedding-based similarity.
 ---
 
 # 文山.skill / Wenshan.skill
@@ -9,6 +9,8 @@ description: Create bilingual evidence-gated Wenshan contour maps that identify 
 
 **中文：用山脉展示你的篇章。** Read [中文工作流](references/workflow.zh.md).
 **English: Map your writing as mountains.** Read the [English workflow](references/workflow.en.md).
+
+Analyze personal writing with **Evidence-Gated Longitudinal Framework Analysis (EGLFA)**: a Wenshan-defined composite specification, not an established published method name. It combines the Framework Method, qualitative content analysis, grounded-theory coding, longitudinal thematic analysis, and argument mining. Read the detailed [中文方法规格](references/methodology.zh.md) or [English method specification](references/methodology.en.md).
 
 Read only what the task needs: [source ingestion](references/article-ingestion.md), [data contract](references/data-contract.md), [host installation](references/agent-compatibility.md), or the [Obsidian shell](references/obsidian-plugin.zh.md).
 
@@ -19,8 +21,9 @@ Render reviewed judgments; never infer document proximity with embeddings.
 - Let the local Agent identify a concrete scene, practice, role, industry, or knowledge-domain keyword from the selected corpus. Never ask the user to predefine mountains.
 - Use the Agent's evidence-backed answer as the subtitle.
 - Count only unique source paths whose cards are both `include: true` and `canonical: true`; three paths make one mountain. Below that: render nothing.
-- Use article count as altitude. Keep evidence titles in their source language.
+- Use article count as accumulated writing volume, not knowledge level. Keep evidence titles in their source language.
 - Require reviewed `label_kind` and `label_rationale` fields before rendering.
+- Put the generation timestamp at the bottom center of the map and include it in the share image.
 
 Prefer recognizable noun phrases with a strong scene or industry anchor, such as `AI工具`, `产品经理`, `CNC`, `智能硬件`, `AI认知`, or `育儿生活`. Reject slogans, full-sentence conclusions, abstract laws, user-entered aspirations, folder names copied without semantic review, and vendor names unless the corpus genuinely centers on that vendor.
 
@@ -38,16 +41,20 @@ Cognitive Map/Agent Atlas/
 
 Write `wenshan-terrain.json` as the auditable semantic source. Follow [data-contract.md](references/data-contract.md). If English copy is absent, preserve the source language; never silently translate evidence titles.
 
-## Workflow
+## EGLFA workflow
 
 Use the user's local Agent to:
 
-1. Exclude prompts, templates, manuals, third-party examples, empty files, and invalid JSON from the selected set.
-2. Resolve drafts and rewrites into version families with one canonical article.
-3. Cluster canonical judgments around repeated real-world scenes, practices, roles, industries, or knowledge domains.
-4. Name each cluster with a compact keyword; reject slogans, conclusions, abstract laws, aspirations, and unreviewed folder names.
-5. Keep clusters with three unique canonical paths. Assign each article to one primary mountain and at most two non-altitude cross-links.
-6. Write one evidence-backed answer per mountain, then validate the schema and render.
+1. **Bound the corpus.** Record author, selected files, time range, document kinds, and authorship. Exclude third-party references, prompts, manuals, templates, empty files, unfinished fragments, and non-author work.
+2. **Fix the analysis unit.** Treat one version-resolved canonical article as one independent unit. Drafts and rewrites never add duplicate altitude.
+3. **Open-code every article.** Extract scenes, industries, roles, practices, knowledge domains, claim, premises, evidence, date, and confidence.
+4. **Axially code candidate peaks.** Merge repeated concrete domains. Reject slogans, full conclusions, quotes, abstract laws, aspirations, unreviewed folder names, and incidental vendor names.
+5. **Apply the evidence gate.** Require three unique canonical paths; explain every assignment; require one primary mountain per article; render no unsupported placeholder.
+6. **Audit mountain boundaries.** Test corpus share, stable subthemes, five-article explainability, subtitle coverage of at least 70%, and whether a split would yield valid three-article subpeaks. Send triggered cases to human review.
+7. **Synthesize the answer longitudinally.** Merge claims, find conflicts, order them by time, distinguish early, revised, and stable claims, then write the current answer.
+8. **Test stability.** Run the same corpus three independent times. Require peak-count delta ≤ 1, core-label semantic agreement ≥ 80%, primary-assignment Jaccard ≥ 0.75, exact altitude counts, and source traceability.
+
+Do not call an analysis longitudinal when reliable document dates or a meaningful time range are unavailable. Repair the dates or describe the result as an evidence-gated framework map without temporal claims.
 
 The renderer is deterministic after semantic preparation. Fix a wrong mountain by revising the evidence or label extraction, never by tuning coordinates.
 
@@ -83,7 +90,7 @@ Run:
 python3 scripts/self_check.py
 ```
 
-Then verify counts, Chinese/English data parity, generated JavaScript, desktop fit, and the 1080×1440 export.
+Then verify counts, Chinese/English data parity, generated JavaScript, the bottom-center timestamp, desktop fit, and the 1080×1440 export.
 
 ## Reuse boundary
 

@@ -12,17 +12,18 @@
 
 Analyze only the selected collection. The user chooses the corpus but does not predefine mountain names.
 
-## Three-stage pipeline
+## EGLFA eight-step pipeline
 
-### 1. Semantic judgment
+Read the complete [EGLFA method specification](methodology.en.md).
 
-Use the local Agent to create auditable cards. Keep the user's durable judgments and exclude prompts, operating instructions, templates, third-party examples, empty files, and invalid data. Preserve original titles and source paths.
-
-### 2. Version consolidation and peak labeling
-
-Group drafts, finals, and rewrites into version families and select one canonical representative per family.
-
-Compare canonical judgments and find recurring real-world scenes, industries, roles, practices, or knowledge domains. The Agent identifies the mountain name from the corpus; the user does not enter it in advance. The name must remain a concrete keyword a reader can recognize, not an abstract law, quote, slogan, or complete conclusion.
+1. Bound author, files, time range, document kinds, and authorship.
+2. Resolve versions and use one canonical article as one analysis unit.
+3. Extract scene, industry, role, practice, knowledge domain, claim, premises, evidence, date, and confidence.
+4. Axially code candidate peaks identified from the corpus rather than predefined by the user.
+5. Require three independent canonical articles to pass the evidence gate.
+6. Audit mountain boundaries with five fixed questions and require human review when triggered.
+7. Synthesize early, revised, and stable claims in time order into the current answer.
+8. Analyze the same corpus independently three times and publish only after stability thresholds pass.
 
 A valid label:
 
@@ -47,9 +48,11 @@ The right-hand phrases may become subtitles or detail judgments, but never repla
 
 Require at least three independent canonical articles. No evidence means no mountain and no placeholder.
 
-### 3. Map generation
+## Map generation
 
 Use the Agent-identified scene or industry keyword as the main title. Use the Agent's evidence-backed answer about that keyword as the subtitle. Article count determines altitude and mass.
+
+Article count represents accumulated writing volume, not knowledge level or correctness. Show the generation time at the bottom center of the map.
 
 Store bilingual copy in `label`, `label_en`, `answer`, and `answer_en`. Keep evidence article titles in their source language.
 

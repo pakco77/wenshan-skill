@@ -1,4 +1,4 @@
 interface:
   display_name: "文山.skill / Wenshan.skill"
-  short_description: "从已审阅篇章识别场景与行业山峰，并生成中英双语知识山图"
-  default_prompt: "Use $knowledge-peak-map to identify concrete scene or industry peaks from my reviewed article collection and render a bilingual evidence-gated Wenshan contour map."
+  short_description: "用 EGLFA 从已审阅篇章生成证据门槛式纵向知识山图"
+  default_prompt: "Use $knowledge-peak-map to apply EGLFA to my reviewed article collection, audit mountain boundaries and stability, and render a bilingual evidence-gated Wenshan contour map."

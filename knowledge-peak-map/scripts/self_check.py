@@ -7,7 +7,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from render_territory_demo import build_payload, validate_peak_labels
+from render_territory_demo import build_payload, validate_method_contract, validate_peak_labels
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -53,6 +53,7 @@ def main() -> None:
         assert all(item["count"] == 3 for item in payload["territories"])
         assert payload["territories"][0]["label_en"] == "Industry 0"
         assert payload["territories"][0]["answer"] == "Agent 对该行业文章的回答"
+        assert payload["generated_at"]
         assert len({(item["x"], item["y"]) for item in payload["territories"]}) == 3
         (vault / ".obsidian").rmdir()
         markdown_payload = build_payload(scope, {"version": 3, "territories": territories}, "", str(scope), "en")
@@ -72,7 +73,29 @@ def main() -> None:
                 pass
             else:
                 raise AssertionError(f"abstract conclusion passed as a mountain title: {invalid_label}")
-        print("PASS scene-and-industry label schema, evidence gate, canonical filter, layout, and Markdown fallback")
+
+        eglfa = {
+            "version": 4,
+            "analysis_method": "EGLFA",
+            "generated_at": "2026-07-16T10:30+08:00",
+            "corpus": {"time_range": ["2026-01-01", "2026-07-01"]},
+            "stability_review": {"status": "passed"},
+            "territories": [{
+                "id": "reviewed-peak",
+                "status": "evidenced",
+                "boundary_review": {"status": "passed", "answer_coverage": 0.75},
+            }],
+        }
+        validate_method_contract(eglfa)
+        eglfa["territories"][0]["boundary_review"]["answer_coverage"] = 0.69
+        try:
+            validate_method_contract(eglfa)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("EGLFA subtitle coverage below 70% passed validation")
+
+        print("PASS EGLFA contract, timestamp, evidence gate, canonical filter, label rejection, layout, and Markdown fallback")
 
 
 if __name__ == "__main__":
